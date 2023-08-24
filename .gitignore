@@ -5,3 +5,6 @@ dbs/random_references.py
 dbs\mylogs.txt
 .twitter_keys.yaml
 /.twitter_keys.yaml
+config.ini
+dbs/config.ini
+/dbs/config.ini
