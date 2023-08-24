@@ -5,9 +5,10 @@ dbs/random_references.py
 dbs\mylogs.txt
 .twitter_keys.yaml
 /.twitter_keys.yaml
-secrets.py
-dbs/secrets.py
-/dbs/secrets.py
-.secrets.py
-dbs/.secrets.py
-/dbs/.secrets.py
+bruh.py
+dbs/bruh.py
+/dbs/bruh.py
+.bruh.py
+dbs/.bruh.py
+/dbs/.bruh.py
+*.pyc
