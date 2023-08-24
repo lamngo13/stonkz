@@ -1,1 +1,1 @@
-python pocstore.py
+python runner.py

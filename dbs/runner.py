@@ -19,7 +19,7 @@ today_date = datetime.now().date()
 #date like this 2023-08-23
 
 file_path = "mylogs.txt"  # Replace with the path to your file
-with open(file_path, "w") as file:
+with open(file_path, "a") as file:
     # Write content to the file
     file.write("runner was run on: " + str(today_date))
     file.write("\n")
