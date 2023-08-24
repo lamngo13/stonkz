@@ -4,6 +4,9 @@ from datetime import datetime, timedelta, date
 
 print("BE KIND TO OTHERS ILY <3")
 
+#write to log file
+
+
 shouldwrite = True #set to False if we get bad data from api 
 
 areweidentical = False
@@ -15,6 +18,11 @@ filesModified= ['bruh']
 today_date = datetime.now().date()
 #date like this 2023-08-23
 
+file_path = "mylogs.txt"  # Replace with the path to your file
+with open(file_path, "w") as file:
+    # Write content to the file
+    file.write("runner was run on: " + str(today_date))
+    file.write("\n")
 
 #this is a SMALL db to ensure that we don't overwrite identical days, prob unnecesary but hey who knows
 zconn = sqlite3.connect("identical.db")
