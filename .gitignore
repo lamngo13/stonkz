@@ -1,6 +1,7 @@
 random_references.py
 mylogs.txt
-db/random_references.py
-/db/mylogs.txt
+dbs/random_references.py
+/dbs/mylogs.txt
+dbs\mylogs.txt
 .twitter_keys.yaml
 /.twitter_keys.yaml
