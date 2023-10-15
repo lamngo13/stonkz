@@ -11,6 +11,13 @@ filesModified= ['bruh']
 
 #get current date
 today_date = datetime.now().date()
+#datetime(year, month, day)
+test_date = datetime(2023, 10, 12).date()
+#^use this to hardcode specific dates. 
+
+
+#now im trying to figure out how to backfill by thinking about how to hardcode a specific date.
+
 #date like this 2023-08-23
 #print(str(today_date))
 #USE THIS TO BACKFILL MISSED DAYS 

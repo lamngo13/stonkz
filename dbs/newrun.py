@@ -2,21 +2,25 @@ import sqlite3
 import yfinance as yf
 from datetime import datetime, timedelta, date
 
+print("BE KIND TO OTHERS ILY <3")
+
 shouldwrite = True #set to False if we get bad data from api 
 
 areweidentical = False
 
-filesModified= ['bruh']
+filesModified= ['invoke']
 
 
 #get current date
 today_date = datetime.now().date()
-#date like this 2023-08-23
-#print(str(today_date))
-#USE THIS TO BACKFILL MISSED DAYS 
-#today_date = date(2023,8,25)
 
-#print(str(today_date))
+test_date = datetime(2023, 10, 14).date()
+#^use this to hardcode specific dates. 
+
+today_date = test_date
+
+
+
 
 #this is a SMALL db to ensure that we don't overwrite identical days, prob unnecesary but hey who knows
 zconn = sqlite3.connect("identical.db")
@@ -65,6 +69,8 @@ stocklist = ["APPL", "RTX,", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
 start_date = today_date - timedelta(days=0)
 end_date = today_date + timedelta(days=1)
 
+#end date is j one day later 
+
 #backfilling 
 
 # Fetch data for the date range
@@ -76,6 +82,7 @@ for s in stocklist:
     try:
         stock = yf.Ticker(ticker)
         data = stock.history(start=start_date, end=end_date)
+        #here is where the api magic happens
 
         data = data.to_dict()
 
