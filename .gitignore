@@ -12,3 +12,4 @@ dbs/bruh.py
 dbs/.bruh.py
 /dbs/.bruh.py
 *.pyc
+dbs/.twitter_keys copy.yaml
