@@ -14,7 +14,7 @@ filesModified= ['start']
 #get current date
 today_date = datetime.now().date()
 
-test_date = datetime(2023, 10, 2).date()
+test_date = datetime(2023, 10, 3).date()
 #YEAR MONTH DAY
 #^use this to hardcode specific dates. 
 
@@ -27,7 +27,7 @@ today_date = test_date
 #defense stock tickers
 #ticker = 'AAPL'  # Example ticker symbol
 stocklist = ["APPL", "RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
-individualdbslister = ["APPL", "RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
+individualdbslister = stocklist
 
 
 # Define a date range around the desired date
