@@ -14,7 +14,7 @@ filesModified= ['start']
 #get current date
 today_date = datetime.now().date()
 
-test_date = datetime(2023, 10, 20).date()
+test_date = datetime(2023, 10, 22).date()
 #YEAR MONTH DAY
 #^use this to hardcode specific dates. 
 
@@ -26,7 +26,7 @@ today_date = test_date
 # Ticker symbol of the stock you want to fetch data for
 #defense stock tickers
 #ticker = 'AAPL'  # Example ticker symbol
-stocklist = ["APPL", "RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
+stocklist = ["RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
 individualdbslister = stocklist
 
 
