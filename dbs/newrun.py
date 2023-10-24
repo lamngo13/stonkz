@@ -8,13 +8,14 @@ shouldwrite = True #set to False if we get bad data from api
 
 areweidentical = False
 
-filesModified= ['invoke']
+filesModified= ['start']
 
 
 #get current date
 today_date = datetime.now().date()
 
-test_date = datetime(2023, 10, 14).date()
+test_date = datetime(2023, 10, 22).date()
+#YEAR MONTH DAY
 #^use this to hardcode specific dates. 
 
 today_date = test_date
@@ -22,63 +23,24 @@ today_date = test_date
 
 
 
-#this is a SMALL db to ensure that we don't overwrite identical days, prob unnecesary but hey who knows
-zconn = sqlite3.connect("identical.db")
-        # Create a cursor
-zcursor = zconn.cursor()
-# Create a table
-zcreate_table_query = '''
-        CREATE TABLE IF NOT EXISTS holder (
-            id INTEGER PRIMARY KEY,
-            date TEXT
-        )
-        '''
-zcursor.execute(zcreate_table_query)
-zconn.commit()
-
-
-zcheckidenticalquery = """
-SELECT EXISTS(SELECT 1 FROM holder WHERE date = ?)
-"""
-zcursor.execute(zcheckidenticalquery, (str(today_date),))
-result = zcursor.fetchone()[0] #prob result true if exists
-
-if not result:
-    #write to db
-    zdatewriter = ''' INSERT INTO holder (date) VALUES (?)'''
-    zcursor.execute(zdatewriter, (str(today_date),))
-    zconn.commit()
-    filesModified.append("identicaldb")
-
-zconn.close()
-
-#TODO EXIT IF IDENTICAL
-
-if (result):
-    exit()
-
-
-
-
 # Ticker symbol of the stock you want to fetch data for
 #defense stock tickers
 #ticker = 'AAPL'  # Example ticker symbol
-stocklist = ["APPL", "RTX,", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
+stocklist = ["RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
+individualdbslister = stocklist
+
 
 # Define a date range around the desired date
 start_date = today_date - timedelta(days=0)
 end_date = today_date + timedelta(days=1)
-
 #end date is j one day later 
 
-#backfilling 
-
-# Fetch data for the date range
-
+#trying a new way, j a query to make sure we don't get duplicates 
 #put this in a big huge big ol try except in the case that the api fails or something 
 for s in stocklist:
     shouldwrite = True
     ticker = s
+
     try:
         stock = yf.Ticker(ticker)
         data = stock.history(start=start_date, end=end_date)
@@ -132,20 +94,29 @@ for s in stocklist:
         '''
         cursor.execute(create_table_query)
 
-        # Insert data
-        insert_data_query = '''
-        INSERT INTO ALLONE (name, date, open, high, low, close, volume) VALUES (?, ?, ?, ?, ?, ?, ?)
-        '''
-        data = (name, today_date, open, high, low, close, volume)
-        cursor.execute(insert_data_query, data)
+        #check to see if identical stock 
+        identicalquery = '''SELECT * FROM ALLONE WHERE name = ? AND date = ?'''
+        cursor.execute(identicalquery, (s, today_date))
+        present = cursor.fetchone()
+        #this should be None if that entry does NOT exist 
+
+        if present is None:
+            # Insert data
+            insert_data_query = '''
+            INSERT INTO ALLONE (name, date, open, high, low, close, volume) VALUES (?, ?, ?, ?, ?, ?, ?)
+            '''
+            data = (name, today_date, open, high, low, close, volume)
+            cursor.execute(insert_data_query, data)
+            #we successfully wrote, so we will mark this for ease of viewing
+            filesModified.append(s)
+        else:
+            print("entry for " +str(s) + " already exists")
 
         # Commit changes and close the connection
         conn.commit()
         conn.close()
 
-
-
-        #NOW EACH ONE GETS ITS OWN DB TOO HEHE!!!!!!!!!!!!!!!!!!!!!!!
+        #NOW EACH ONE GETS ITS OWN DB TOO HEHE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         #i think this is create if not exists
         conn = sqlite3.connect(str(name)+".db")
         # Create a cursor
@@ -166,23 +137,45 @@ for s in stocklist:
         cursor.execute(create_table_query)
 
         #check to see if this entry already exists 
+        #check to see if identical stock 
+        identicalquery = '''SELECT * FROM ''' + str(name) + ''' WHERE date = ?'''
+        cursor.execute(identicalquery, (today_date,))
+        present = cursor.fetchone()
+        #this should be None if that entry does NOT exist 
 
-        # Insert data
-        insert_data_query = '''
-        INSERT INTO ''' + str(name) + ''' (date, open, high, low, close, volume) VALUES (?, ?, ?, ?, ?, ?)
-        '''
-        data = (today_date, open, high, low, close, volume)
-        cursor.execute(insert_data_query, data)
+        if present is None:
+            # Insert data
+            insert_data_query = '''
+            INSERT INTO ''' + str(name) + ''' (date, open, high, low, close, volume) VALUES (?, ?, ?, ?, ?, ?)
+            '''
+            data = (today_date, open, high, low, close, volume)
+            cursor.execute(insert_data_query, data)
+            #we successfully wrote, so we will mark this for ease of viewing
+            individualdbslister.append(s)
+        else:
+            print("entry for " + str(s) + " already exists -- individual db")
 
         # Commit changes and close the connection
         conn.commit()
-        filesModified.append(name)
         conn.close()
 
-print("FILES MODIFIED: ")
+
+undone = [stock for stock in stocklist if stock not in filesModified]
+#this notes all the stocks that are IN stocklist but NOT modified 
+
+print("ALL ONE DB: ")
+print("stocks noted: ")
 print(filesModified)
-#for fm in filesModified:
-#    print(filesModified.index(fm))
+print("stocks left out: ")
+print(undone)
+#now to individual dbs
+print("INDIVIDUAL DBS")
+print("stocks noted: ")
+print(individualdbslister)
+zundone = [stock for stock in stocklist if stock not in individualdbslister]
+print("stocks left out: ")
+print(zundone)
+
 
 
 
