@@ -1,4 +1,5 @@
 import searchtweets
+import tweepy
 from searchtweets import ResultStream, collect_results, load_credentials
 import bruh
 #secret file 
@@ -11,6 +12,27 @@ bearer_token = bruh.bearer_token
 access_token = bruh.access_token
 access_token_secret = bruh.access_token_secret
 zbruh = [name, api_key, api_key_secret, bearer_token, access_token, access_token_secret]
+
+auth = tweepy.OAuthHandler(api_key, api_key_secret)
+auth.set_access_token(access_token, access_token_secret)
+
+api = tweepy.API(auth)
+
+# Search for tweets
+query = 'dog'
+max_tweets = 100  # Maximum number of tweets to retrieve
+
+tweets = tweepy.Cursor(api.search_tweets, q=query, count=100, lang="en").items(max_tweets)
+
+# Print tweets
+for tweet in tweets:
+    print(tweet.text)
+
+
+
+print("end")
+exit()
+
 
 p_search_args = load_credentials("twitter_keys.yaml", yaml_key="search_tweets_api")
 
