@@ -4,6 +4,15 @@ import sqlite3
 import pandas as pd
 from sklearn.impute import SimpleImputer
 from datetime import datetime, timedelta, date
+import warnings
+
+#NEXT STEPS TODO
+#fill out predictions for all of october
+#then try to predict next available day lol ezpz
+# Ignore specific warnings
+warnings.filterwarnings("ignore", message=".*A value is trying to be set on a copy of a slice from a DataFrame.*", category=UserWarning)
+warnings.filterwarnings("ignore", message=".*X does not have valid feature names, but SimpleImputer was fitted with feature names.*", category=UserWarning)
+
 
 # List of stock tickers
 stocklist = ["RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
@@ -25,7 +34,7 @@ RecieverDate = datetime(2023, 10,1).date()
 
 iterator = 0
 
-while iterator <= 25:
+while iterator <= 28:
 
     #FIRST, check to see if reciever date is valid, and if not, iterate it. 
     goodReciever = False
@@ -40,9 +49,15 @@ while iterator <= 25:
         else:
             #we must iterate to the next date 
             RecieverDate += timedelta(days=1)
+            #print("not found rip")
     #end while loop
     print("rec date: " + str(RecieverDate))
-    exit()
+
+    #measure dates here:
+    print("iterator: " + str(iterator))
+    print("start: " + str(currentDate))
+    print("end: " + str(endDate))
+    print("REC DATE: " + str(RecieverDate))
 
     # Loop through each stock ticker
     for stock_ticker in stocklist:
@@ -55,6 +70,7 @@ while iterator <= 25:
         # Load data from the database into a pandas DataFrame
         df = pd.read_sql(query, conn)
 
+
         #---------------------END RETRIEVAL FROM DB----------------------------
         # Extract date features
         df['date'] = pd.to_datetime(df['date'])
@@ -63,7 +79,7 @@ while iterator <= 25:
         df['day_of_week'] = df['date'].dt.dayofweek
 
         # Create lag features for the previous week's closing price
-        df['lag_close_1'] = df['close'].shift(1)  # Assuming 5 trading days in a week
+        df['lag_close_1'] = df['close'].shift(1) 
 
         # Calculate rolling mean and rolling standard deviation
         window = 3
@@ -112,7 +128,9 @@ while iterator <= 25:
         latest_stock_data = df.tail(1)
 
         # Create lag features for the day you want to predict
-        latest_stock_data['lag_close_1'] = latest_stock_data['close'].shift(1)  # Assuming 5 trading days in a week
+        #latest_stock_data['lag_close_1'] = latest_stock_data['close'].shift(1)
+        latest_stock_data.loc[:, 'lag_close_1'] = latest_stock_data['close'].shift(1)
+
 
         # Extract features for prediction
         stock_features = latest_stock_data[['day', 'month', 'day_of_week', 'lag_close_1', 'close_mean', 'close_std', 'open_mean', 'open_std', 'high_mean', 'high_std', 'low_mean', 'low_std', 'volume_mean', 'volume_std', 'prediction_mean', 'prediction_std']].values
@@ -122,9 +140,22 @@ while iterator <= 25:
 
         # Make prediction using the model and imputed features
         stock_prediction = model.predict(stock_features_imputed)
+        #print("iterator: " + str(iterator))
+        #print("start: " + str(currentDate))
+        #print("end: " + str(endDate))
+        #print("REC DATE: " + str(RecieverDate))
 
         storer.append(f'The next stock price for {stock_ticker} will be: {stock_prediction[0]}')
-        #TODO spikeball
+        cursor = conn.cursor()
+        updatePredictionquery = '''
+            UPDATE ALLONE
+            SET prediction = ?
+            WHERE name = ? AND date = ?'''
+        cursor.execute(updatePredictionquery, (stock_prediction[0], stock_ticker, RecieverDate))
+        conn.commit()
+        print("yuh")
+
+
     #end of for loop, time to iterate
     iterator += 1
     currentDate += timedelta(days=1)
