@@ -8,6 +8,9 @@ import warnings
 from sklearn.preprocessing import MinMaxScaler
 import torch
 import torch.nn as nn
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
 
 #THIS POPULATES wpred.db with good predictions NONRECURSIVELY
 
