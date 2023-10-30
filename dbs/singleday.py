@@ -20,7 +20,7 @@ for stock_ticker in stocklist:
     query = f'''
         SELECT date, open, high, low, close, volume 
         FROM ALLONE 
-        WHERE date BETWEEN '2023-10-01' AND '2023-10-20' AND name = '{stock_ticker}'
+        WHERE date BETWEEN '2023-10-01' AND '2023-10-27' AND name = '{stock_ticker}'
     '''
 
     # Load data from the database into a pandas DataFrame

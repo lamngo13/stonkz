@@ -8,8 +8,8 @@ cursor = conn.cursor()
 
 # Add a new column 'prediction' with the same data as 'close'
 try:
-    cursor.execute('''ALTER TABLE ALLONE ADD COLUMN prediction REAL;''')  # Replace your_table_name with the actual table name
-    cursor.execute('''UPDATE ALLONE SET prediction = close;''')  # Replace your_table_name with the actual table name
+    #cursor.execute('''ALTER TABLE ALLONE ADD COLUMN prediction REAL;''')  # Replace your_table_name with the actual table name
+    cursor.execute('''UPDATE ALLONE SET prediction = 0;''')  # Replace your_table_name with the actual table name
     print("Column 'prediction' added successfully.")
 except sqlite3.Error as e:
     print("Error:", e)
