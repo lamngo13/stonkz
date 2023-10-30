@@ -6,10 +6,8 @@ from sklearn.impute import SimpleImputer
 from datetime import datetime, timedelta, date
 import warnings
 
-#NEXT STEPS TODO
-#fill out predictions for all of october
-#then try to predict next available day lol ezpz
-# Ignore specific warnings
+#THIS USES RECURSIVE PREDICTION USING wpred.db
+
 warnings.filterwarnings("ignore", message=".*A value is trying to be set on a copy of a slice from a DataFrame.*", category=UserWarning)
 warnings.filterwarnings("ignore", message=".*X does not have valid feature names, but SimpleImputer was fitted with feature names.*", category=UserWarning)
 

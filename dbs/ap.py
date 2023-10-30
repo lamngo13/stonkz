@@ -4,6 +4,8 @@ import sqlite3
 import pandas as pd
 from sklearn.impute import SimpleImputer
 
+#THIS MAKES HARD PREDICTIONS (WITHOUT RECURSIVE PREDICTION)
+
 # List of stock tickers
 stocklist = ["RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
 storer = []

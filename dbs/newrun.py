@@ -2,6 +2,7 @@ import sqlite3
 import yfinance as yf
 from datetime import datetime, timedelta, date
 
+#THIS GETS NEW STOCK DATA AND PUTS IT IN ALLONE.DB
 print("BE KIND TO OTHERS ILY <3")
 
 shouldwrite = True #set to False if we get bad data from api 
@@ -14,7 +15,7 @@ filesModified= ['start']
 #get current date
 today_date = datetime.now().date()
 
-test_date = datetime(2023, 10, 27).date()
+test_date = datetime(2023, 10, 26).date()
 #YEAR MONTH DAY
 #^use this to hardcode specific dates. 
 
