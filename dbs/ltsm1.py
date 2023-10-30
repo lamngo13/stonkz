@@ -5,6 +5,9 @@ import pandas as pd
 from sklearn.impute import SimpleImputer
 from datetime import datetime, timedelta, date
 import warnings
+from sklearn.preprocessing import MinMaxScaler
+import torch
+import torch.nn as nn
 
 #THIS POPULATES wpred.db with good predictions NONRECURSIVELY
 
@@ -19,7 +22,7 @@ stocklist = ["RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
 storer = []
 
 # Connect to the SQLite database
-conn = sqlite3.connect('ALLONE.db')
+conn = sqlite3.connect('eltee.db')
 
 # Initialize the imputer
 imputer = SimpleImputer(strategy='mean')
@@ -63,7 +66,7 @@ while iterator <= 28:
     for stock_ticker in stocklist:
         # Query to retrieve stock data for the current stock ticker within a specific date range
         query = f'''
-            SELECT date, open, high, low, close, volume, prediction 
+            SELECT date, open, high, low, close, volume
             FROM ALLONE 
             WHERE date BETWEEN '{startDate}' AND '{endDate}' AND name = '{stock_ticker}'
         '''
