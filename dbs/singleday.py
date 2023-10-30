@@ -83,12 +83,22 @@ print("\n")
 for i in storer:
     print(i)
 
-#assuming for 2023-10-23
-#The next stock price for RTX will be: 73.06670181274414
-#The next stock price for NOC will be: 485.91860931396485 !!!!!!!!!!!!!!!!
-#The next stock price for GD will be: 236.46566650390625
-#The next stock price for LDOS will be: 93.00990005493163 !!!!!!!!!!!!!!!!!!!!!!!
-#The next stock price for KBR will be: 59.38069984436035
-#The next stock price for BWXT will be: 76.84980087280273
-#The next stock price for RKLB will be: 4.281900053024292
-#The next stock price for LMT will be: 443.78630584716797
+#from ltsm
+#The next stock price for RTX will be: 77.38436889648438
+#The next stock price for NOC will be: 474.0264587402344
+#The next stock price for GD will be: 238.8101348876953
+#The next stock price for LDOS will be: 92.97588348388672
+#The next stock price for KBR will be: 59.88546371459961
+#The next stock price for BWXT will be: 75.37986755371094
+#The next stock price for RKLB will be: 4.702893257141113
+#The next stock price for LMT will be: 434.6736755371094
+
+#from singleday
+#The next stock price for RTX will be: 77.70670181274414
+#The next stock price for NOC will be: 478.53520141601564
+#The next stock price for GD will be: 239.02880081176758
+#The next stock price for LDOS will be: 92.03229957580567
+#The next stock price for KBR will be: 58.99599975585937
+#The next stock price for BWXT will be: 75.64330085754395
+#The next stock price for RKLB will be: 4.289700074195862
+#The next stock price for LMT will be: 444.13280303955077
