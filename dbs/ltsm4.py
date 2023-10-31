@@ -21,30 +21,35 @@ scaler = MinMaxScaler()
 # Extract features from the DataFrame
 features = ['open', 'high', 'low', 'close', 'volume']
 
-# Training parameters
-#COOL HYPERPARAMATERS THIS IS PROB THE FUN PART HEHE
-hidden_size = 50
-#idk?
-num_layers = 3
-#should prob be as high as tolerable but 5 seems okay
-sequence_length = 25
-#should prob be as high as tolerable but who knows
-num_epochs = 100
-#TRULY HAVE NO IDEA
-#THIS will be a new hyperparameter to hardcode previous number of days as features 
-input_size = len(features) #TODO maybe change this to include num_prev_days
-
-num_lag_features = 8
-#THIS will be a new hyperparameter to hardcode previous number of days as features 
-
 #JUST FOR TESTING DELTE LATER
-hidden_size = 37
-num_layers = 3
-sequence_length = 21
-num_epochs = 58
+hidden_size = 20
+num_layers = 1
+sequence_length = 15
+num_epochs = 50
 input_size = len(features) 
 num_lag_features = 6
 #######LASDKFJASLDKFJASDLKFJASDLKFJ
+
+#later i plan to run many models like this but with a bunch of different
+#hyperparameters and tune it WITH OUR GOOD FRIEND RANDOM FORREST
+hyperparameters = [
+    [50, 3, 25, 100, 8],
+    [50, 3, 30, 100, 3],
+    [50, 2, 30, 100, 3],
+    [22, 2, 10, 150, 6],
+    [70, 12, 16, 150, 15],
+    [40, 2, 25, 90, 7],
+    [50, 1, 15, 100, 7],
+    [50, 2, 11, 150, 5],
+    [32, 1, 15, 50, 4],
+    [30, 1, 12, 45, 4],
+    [30, 1, 11, 40, 3],
+    [28, 2, 11, 100, 3],
+    [33, 2, 17, 55, 5],
+    [34, 2, 18, 57, 5],
+    [35, 2, 19, 58, 5],
+    [37, 3, 21, 58, 6]
+]
 
 
 # Loop through each stock ticker
