@@ -31,6 +31,7 @@ input_size = len(features)  # Adjust input size to include lag features
 
 # Loop through each stock ticker
 for stock_ticker in stocklist:
+    features = ['open', 'high', 'low', 'close', 'volume']
     # Query to retrieve stock data for the current stock ticker within a specific date range
     query = f'''
         SELECT date, open, high, low, close, volume
@@ -60,15 +61,18 @@ for stock_ticker in stocklist:
         print(col)
     print(features)
     print("YEET: " + str(len(features)))
-    exit()
+    
     input_size = len(features)
-    # Calculate rolling mean and rolling standard deviation
-    window = 3
-    df['close_mean'] = df['close'].rolling(window=window).mean()
-    df['close_std'] = df['close'].rolling(window=window).std()
+    print("NEW INPUT SIZE (i think should be 15):" + str(input_size))
+
 
     # Drop NaN values
     df = df.dropna()
+    print("AYYYYYOOOOOO")
+    print("\n")
+    print(df)
+    print("YUHHHHHHHHHHHHH")
+    print(df['lag_close_5'])
 
     # Extract necessary features
     X = df[features].values

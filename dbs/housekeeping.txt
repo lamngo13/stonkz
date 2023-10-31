@@ -1,3 +1,10 @@
+TODO:
+find a way to order the data like frfr better bc this junk is not guuci gang
+use that to fix ltsm2.py otherwise its alrightttt
+
+***fix ltsm3 by making a hyperparameter for the number of lag_close_1 days 
+
+
 Requirement already satisfied: MarkupSafe>=2.1.1 in c:\python311\lib\site-packages (from werkzeug>=1.0.1->tensorboard<2.15,>=2.14->tensorflow-intel==2.14.0->tensorflow) (2.1.3)
 Requirement already satisfied: pyasn1<0.6.0,>=0.4.6 in c:\python311\lib\site-packages (from pyasn1-modules>=0.2.1->google-auth<3,>=1.6.3->tensorboard<2.15,>=2.14->tensorflow-intel==2.14.0->tensorflow) (0.5.0)
 Requirement already satisfied: oauthlib>=3.0.0 in c:\python311\lib\site-packages (from requests-oauthlib>=0.7.0->google-auth-oauthlib<1.1,>=0.5->tensorboard<2.15,>=2.14->tensorflow-intel==2.14.0->tensorflow) (3.2.2)

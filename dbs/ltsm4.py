@@ -31,9 +31,11 @@ sequence_length = 30
 #should prob be as high as tolerable but who knows
 num_epochs = 100
 #TRULY HAVE NO IDEA
-num_prev_days = 10
 #THIS will be a new hyperparameter to hardcode previous number of days as features 
 input_size = len(features) #TODO maybe change this to include num_prev_days
+
+num_lag_features = 7
+#THIS will be a new hyperparameter to hardcode previous number of days as features 
 
 
 # Loop through each stock ticker
@@ -56,9 +58,13 @@ for stock_ticker in stocklist:
 
 
 
-    df['lag_close_1'] = df['close'].shift(1)
     features = ['open', 'high', 'low', 'close', 'volume']
-    features.append('lag_close_1')
+
+    for i in range(1, num_lag_features + 1):
+        col_name = f'lag_close_{i}'
+        df[col_name] = df['close'].shift(i)
+        features.append(col_name)
+
     input_size = len(features)
     print(len(df))
     #print(df)
