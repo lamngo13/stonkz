@@ -9,7 +9,8 @@ from sklearn.ensemble import RandomForestRegressor
 
 
 
-def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, num_lag_features):
+def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, num_lag_features, date):
+    #test_date = datetime(2023, 10, 30).date()
     # Connect to the SQLite database
     conn = sqlite3.connect('eltee.db')
 
@@ -135,33 +136,27 @@ def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, n
 #hidden_size, num_layers, sequence_length, num_epochs, num_lag_features
 #THE MAIN IDEA IS TO MAKE A BUNCH OF LTSM MODELS AND LET RANDOMFORREST TUNE MY STUFF 
 
-#hiddensize at least 60
-#num_layers at least 2
-#sequence length 
-#epoch 100
-#lag days tbd 
-
 hyperparameters = [
-    [60, 2, 3, 100, 3],
-    [60, 2, 3, 100, 3],
-    [60, 2, 3, 100, 3],
-    [60, 2, 3, 100, 3],
-    [60, 2, 3, 100, 3],
-    [60, 2, 3, 100, 3],
-    [60, 2, 3, 100, 3],
-    [60, 2, 3, 100, 3],
-    [60, 1, 3, 100, 3],
-    [60, 1, 3, 100, 3],
-    [60, 1, 3, 100, 3],
-    [60, 3, 3, 100, 3],
-    [60, 3, 3, 100, 3],
-    [60, 3, 3, 100, 3],
-    [60, 3, 3, 100, 3],
-    [60, 3, 3, 100, 3],
-    [60, 3, 3, 100, 3],
-    [60, 3, 3, 100, 3],
-    [60, 3, 3, 100, 3],
-    [60, 3, 3, 100, 3]
+    [50, 1, 3, 50, 3],
+    [50, 1, 3, 51, 3],
+    [50, 1, 3, 52, 3],
+    [50, 1, 3, 53, 3],
+    [50, 1, 3, 54, 3],
+    [50, 1, 3, 55, 3],
+    [50, 1, 3, 56, 3],
+    [50, 1, 3, 57, 3],
+    [50, 1, 3, 58, 3],
+    [50, 1, 3, 50, 3],
+    [51, 1, 3, 50, 3],
+    [52, 1, 3, 50, 3],
+    [52, 1, 3, 50, 3],
+    [53, 1, 3, 50, 3],
+    [54, 1, 3, 50, 3],
+    [55, 1, 3, 50, 3],
+    [56, 1, 3, 50, 3],
+    [57, 1, 3, 50, 3],
+    [58, 1, 3, 50, 3],
+    [59, 1, 3, 50, 3]
 ]
 
 
@@ -183,7 +178,7 @@ iterator = 0
 df = pd.DataFrame()
 for row in hyperparameters:
     iterator += 1
-    df["MODEL " + str(iterator)] = predict_stock_prices(row[0], row[1], row[2], row[3], row[4])
+    df["MODEL " + str(iterator)] = predict_stock_prices(row[0], row[1], row[2], row[3], row[4]) #test_date = datetime(2023, 10, 30).date()
     #I swear we're close we just need to random forrest this bad boy 
     #we're getting this so far
 #             MODEL 1     MODEL 2     MODEL 3

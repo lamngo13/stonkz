@@ -28,6 +28,7 @@ today_date = test_date
 #defense stock tickers
 #ticker = 'AAPL'  # Example ticker symbol
 stocklist = ["RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
+individualdbslister = stocklist
 
 
 # Define a date range around the desired date
@@ -116,6 +117,49 @@ for s in stocklist:
         conn.commit()
         conn.close()
 
+        #NOW EACH ONE GETS ITS OWN DB TOO HEHE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        #i think this is create if not exists
+        conn = sqlite3.connect(str(name)+".db")
+        # Create a cursor
+        cursor = conn.cursor()
+
+        # Create a table
+        create_table_query = '''
+        CREATE TABLE IF NOT EXISTS ''' + str(name) + ''' (
+            id INTEGER PRIMARY KEY,
+            date TEXT,
+            open TEXT,
+            high TEXT,
+            low TEXT,
+            close TEXT,
+            volume TEXT
+        )
+        '''
+        cursor.execute(create_table_query)
+
+        #check to see if this entry already exists 
+        #check to see if identical stock 
+        identicalquery = '''SELECT * FROM ''' + str(name) + ''' WHERE date = ?'''
+        cursor.execute(identicalquery, (today_date,))
+        present = cursor.fetchone()
+        #this should be None if that entry does NOT exist 
+
+        if present is None:
+            # Insert data
+            insert_data_query = '''
+            INSERT INTO ''' + str(name) + ''' (date, open, high, low, close, volume) VALUES (?, ?, ?, ?, ?, ?)
+            '''
+            data = (today_date, open, high, low, close, volume)
+            cursor.execute(insert_data_query, data)
+            #we successfully wrote, so we will mark this for ease of viewing
+            individualdbslister.append(s)
+        else:
+            print("entry for " + str(s) + " already exists -- individual db")
+
+        # Commit changes and close the connection
+        conn.commit()
+        conn.close()
+
 
 undone = [stock for stock in stocklist if stock not in filesModified]
 #this notes all the stocks that are IN stocklist but NOT modified 
@@ -125,7 +169,13 @@ print("stocks noted: ")
 print(filesModified)
 print("stocks left out: ")
 print(undone)
-
+#now to individual dbs
+print("INDIVIDUAL DBS")
+print("stocks noted: ")
+print(individualdbslister)
+zundone = [stock for stock in stocklist if stock not in individualdbslister]
+print("stocks left out: ")
+print(zundone)
 
 
 
