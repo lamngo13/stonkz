@@ -25,17 +25,26 @@ features = ['open', 'high', 'low', 'close', 'volume']
 #COOL HYPERPARAMATERS THIS IS PROB THE FUN PART HEHE
 hidden_size = 50
 #idk?
-num_layers = 5
+num_layers = 3
 #should prob be as high as tolerable but 5 seems okay
-sequence_length = 30
+sequence_length = 25
 #should prob be as high as tolerable but who knows
 num_epochs = 100
 #TRULY HAVE NO IDEA
 #THIS will be a new hyperparameter to hardcode previous number of days as features 
 input_size = len(features) #TODO maybe change this to include num_prev_days
 
-num_lag_features = 7
+num_lag_features = 8
 #THIS will be a new hyperparameter to hardcode previous number of days as features 
+
+#JUST FOR TESTING DELTE LATER
+hidden_size = 37
+num_layers = 3
+sequence_length = 21
+num_epochs = 58
+input_size = len(features) 
+num_lag_features = 6
+#######LASDKFJASLDKFJASDLKFJASDLKFJ
 
 
 # Loop through each stock ticker
@@ -52,12 +61,6 @@ for stock_ticker in stocklist:
 
     # Extract date features
     df['date'] = pd.to_datetime(df['date'])
-    df['day'] = df['date'].dt.day
-    df['month'] = df['date'].dt.month
-    df['day_of_week'] = df['date'].dt.dayofweek
-
-
-
     features = ['open', 'high', 'low', 'close', 'volume']
 
     for i in range(1, num_lag_features + 1):
@@ -66,18 +69,6 @@ for stock_ticker in stocklist:
         features.append(col_name)
 
     input_size = len(features)
-    print(len(df))
-    #print(df)
-    print("bruh")
-    for col in df.columns:
-        print(col)
-    print(features)
-    print("YEET: " + str(len(features)))
-    #exit()
-    # Calculate rolling mean and rolling standard deviation
-    #window = 3
-    #df['close_mean'] = df['close'].rolling(window=window).mean()
-    #df['close_std'] = df['close'].rolling(window=window).std()
 
     # Drop NaN values
     df = df.dropna()
