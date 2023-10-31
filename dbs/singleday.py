@@ -93,6 +93,26 @@ for i in storer:
 #The next stock price for RKLB will be: 4.702893257141113
 #The next stock price for LMT will be: 434.6736755371094
 
+#ltsm with more layers
+#The next stock price for RTX will be: 77.83975982666016
+#The next stock price for NOC will be: 457.97308349609375
+#The next stock price for GD will be: 227.5014190673828
+#The next stock price for LDOS will be: 93.96693420410156
+#The next stock price for KBR will be: 60.027557373046875
+#The next stock price for BWXT will be: 75.29927062988281
+#The next stock price for RKLB will be: 4.160778522491455
+#The next stock price for LMT will be: 429.79718017578125
+
+#ltsm2 with more layers and greater sequence
+#The next stock price for RTX will be: 77.50206756591797
+#The next stock price for NOC will be: 462.56683349609375
+#The next stock price for GD will be: 224.27565002441406
+#The next stock price for LDOS will be: 91.66226959228516
+#The next stock price for KBR will be: 58.759456634521484
+#The next stock price for BWXT will be: 74.57535552978516
+#The next stock price for RKLB will be: 4.272033214569092
+#The next stock price for LMT will be: 438.1769104003906
+    
 #from singleday
 #The next stock price for RTX will be: 77.70670181274414
 #The next stock price for NOC will be: 478.53520141601564

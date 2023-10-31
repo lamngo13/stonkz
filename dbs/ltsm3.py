@@ -22,19 +22,12 @@ scaler = MinMaxScaler()
 features = ['open', 'high', 'low', 'close', 'volume']
 
 # Training parameters
-#COOL HYPERPARAMATERS THIS IS PROB THE FUN PART HEHE
 hidden_size = 50
-#idk?
 num_layers = 5
-#should prob be as high as tolerable but 5 seems okay
 sequence_length = 30
-#should prob be as high as tolerable but who knows
 num_epochs = 100
-#TRULY HAVE NO IDEA
 num_prev_days = 10
-#THIS will be a new hyperparameter to hardcode previous number of days as features 
-input_size = len(features) #TODO maybe change this to include num_prev_days
-
+input_size = len(features)  # Adjust input size to include lag features
 
 # Loop through each stock ticker
 for stock_ticker in stocklist:
@@ -53,9 +46,13 @@ for stock_ticker in stocklist:
     df['month'] = df['date'].dt.month
     df['day_of_week'] = df['date'].dt.dayofweek
 
+    # Create lag features for the previous few days closing prices
+    for i in range(num_prev_days):
+        tempString = "lag_close_"+str(i+1)
+        df[tempString] = df['close'].shift(i+1)
+        print(tempString)
+        features.append(tempString)
 
-
-    df['lag_close_1'] = df['close'].shift(1)
     print(len(df))
     #print(df)
     print("bruh")
@@ -64,6 +61,7 @@ for stock_ticker in stocklist:
     print(features)
     print("YEET: " + str(len(features)))
     exit()
+    input_size = len(features)
     # Calculate rolling mean and rolling standard deviation
     window = 3
     df['close_mean'] = df['close'].rolling(window=window).mean()
