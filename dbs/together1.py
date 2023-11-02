@@ -164,7 +164,7 @@ hyperparameters = [
     [60, 3, 3, 100, 3]
 ]
 
-
+#socks, underwear, frisbee, ping pong, mouse, pepper spray, phone case iphone Xr
 #this is j shorter for testing 
 #hyperparameters = [
    # [10, 3, 25, 100, 8],

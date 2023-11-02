@@ -9,7 +9,7 @@ from sklearn.ensemble import RandomForestRegressor
 
 
 
-def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, num_lag_features, date):
+def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, num_lag_features):
     #test_date = datetime(2023, 10, 30).date()
     # Connect to the SQLite database
     conn = sqlite3.connect('eltee.db')
@@ -137,28 +137,32 @@ def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, n
 #THE MAIN IDEA IS TO MAKE A BUNCH OF LTSM MODELS AND LET RANDOMFORREST TUNE MY STUFF 
 
 hyperparameters = [
-    [50, 1, 3, 50, 3],
-    [50, 1, 3, 51, 3],
-    [50, 1, 3, 52, 3],
-    [50, 1, 3, 53, 3],
-    [50, 1, 3, 54, 3],
-    [50, 1, 3, 55, 3],
-    [50, 1, 3, 56, 3],
-    [50, 1, 3, 57, 3],
-    [50, 1, 3, 58, 3],
-    [50, 1, 3, 50, 3],
-    [51, 1, 3, 50, 3],
-    [52, 1, 3, 50, 3],
-    [52, 1, 3, 50, 3],
-    [53, 1, 3, 50, 3],
-    [54, 1, 3, 50, 3],
-    [55, 1, 3, 50, 3],
-    [56, 1, 3, 50, 3],
-    [57, 1, 3, 50, 3],
-    [58, 1, 3, 50, 3],
-    [59, 1, 3, 50, 3]
+    [50, 2, 3, 50, 3],
+    [50, 2, 4, 50, 3],
+    [50, 2, 5, 50, 3],
+    [50, 2, 6, 50, 3],
+    [50, 2, 7, 50, 3],
+    [50, 2, 8, 50, 3],
+    [50, 2, 9, 50, 3],
+    [50, 2, 3, 50, 3],
+    [50, 2, 3, 50, 3],
+    [50, 2, 3, 50, 3],
+    [51, 2, 3, 50, 3],
+    [52, 2, 3, 50, 3],
+    [52, 2, 3, 50, 3],
+    [53, 2, 10, 50, 3],
+    [54, 2, 11, 50, 3],
+    [55, 2, 12, 50, 3],
+    [56, 2, 13, 50, 3],
+    [57, 2, 14, 50, 3],
+    [58, 2, 15, 50, 3],
+    [59, 2, 16, 50, 3]
 ]
-
+#hiddensize at least 60
+#num_layers at least 2
+#sequence length 
+#epoch 100
+#lag days tbd 
 
 #this is j shorter for testing 
 #hyperparameters = [
@@ -173,13 +177,15 @@ sequence_length = 2
 num_epochs = 3
 num_lag_features = 4
 stocklist = ["RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
-#realPrices = [79.01, 467.75, 240.96, 92]
+realPrices = [79.01, 467.75, 240.96, 92]
 iterator = 0
 df = pd.DataFrame()
 for row in hyperparameters:
     iterator += 1
     df["MODEL " + str(iterator)] = predict_stock_prices(row[0], row[1], row[2], row[3], row[4]) #test_date = datetime(2023, 10, 30).date()
     #I swear we're close we just need to random forrest this bad boy 
+    #for i in range(len(realPrices)):
+        #print("YEET")
     #we're getting this so far
 #             MODEL 1     MODEL 2     MODEL 3
 #RTX    75.539215   76.011543   76.424179
@@ -190,6 +196,7 @@ for row in hyperparameters:
 #BWXT   77.069778   77.081123   76.638786
 #RKLB    4.279412    4.275094    4.232845
 #LMT   447.178619  436.375916  449.385651
+    
 
 print(df)
 
