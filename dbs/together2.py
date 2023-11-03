@@ -6,10 +6,11 @@ from sklearn.preprocessing import MinMaxScaler
 import torch
 import torch.nn as nn
 from sklearn.ensemble import RandomForestRegressor
+from datetime import datetime, timedelta, date
 
 
 
-def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, num_lag_features):
+def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, num_lag_features, input_date):
     #test_date = datetime(2023, 10, 30).date()
     # Connect to the SQLite database
     conn = sqlite3.connect('eltee.db')
@@ -32,7 +33,7 @@ def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, n
         query = f'''
             SELECT date, open, high, low, close, volume
             FROM ALLONE 
-            WHERE name = '{stock_ticker}'
+            WHERE name = '{stock_ticker}' AND date < '{input_date}'
         '''
         # Load data from the database into a pandas DataFrame
         df = pd.read_sql(query, conn)
@@ -43,7 +44,7 @@ def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, n
 
         for i in range(1, num_lag_features + 1):
             col_name = f'lag_close_{i}'
-            df[col_name] = df['close'].shift(i)
+            df[col_name] = df['close'].shift(i)    #TODO maybe change this to predict farther in the future
             features.append(col_name)
 
         input_size = len(features)
@@ -113,7 +114,8 @@ def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, n
         # Update the database with the predicted values
         #storer.append(f'The next stock price for {stock_ticker} will be: {predicted_features[3]}')  # Close price is at index 3
         #print(f'The next stock price for {stock_ticker} will be: {predicted_features[3]}')  # Close price is at index 3)
-        storer[stock_ticker] = predicted_features[3]
+        #features = ['open', 'high', 'low', 'close', 'volume'] open is 0:::: 3 is close 
+        storer[stock_ticker] = predicted_features[0]
 
     # Close the database connection
     conn.close()
@@ -177,12 +179,20 @@ sequence_length = 2
 num_epochs = 3
 num_lag_features = 4
 stocklist = ["RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
-realPrices = [79.01, 467.75, 240.96, 92]
+realPrices = [79, 473.6, 238.6, 92.3, 57.54, 74.3, 4.2, 444] #THESE ARE OPEN PRICES
 iterator = 0
+test_date = datetime(2023, 10, 29).date()
+difference_df = pd.DataFrame(columns=stocklist)
+
+
 df = pd.DataFrame()
 for row in hyperparameters:
     iterator += 1
-    df["MODEL " + str(iterator)] = predict_stock_prices(row[0], row[1], row[2], row[3], row[4]) #test_date = datetime(2023, 10, 30).date()
+    df["MODEL " + str(iterator)] = predict_stock_prices(row[0], row[1], row[2], row[3], row[4], test_date) #test_date = datetime(2023, 10, 30).date()
+    differences = {stock_ticker: row[f"MODEL {i+1}"] - real_price for i, (stock_ticker, real_price) in enumerate(zip(stocklist, realPrices))}
+    difference_df = difference_df.append(differences, ignore_index=True)
+
+    #OPTIMUS PRIME
     #I swear we're close we just need to random forrest this bad boy 
     #for i in range(len(realPrices)):
         #print("YEET")
@@ -199,6 +209,8 @@ for row in hyperparameters:
     
 
 print(df)
+print("yeet")
+print(difference_df)
 
 exit()
 
