@@ -33,8 +33,9 @@ def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, n
         query = f'''
             SELECT date, open, high, low, close, volume
             FROM ALLONE 
-            WHERE name = '{stock_ticker}' AND date < '{input_date}'
+            WHERE name = '{stock_ticker}'
         '''
+        # AND date < '{input_date}
         # Load data from the database into a pandas DataFrame
         df = pd.read_sql(query, conn)
 
@@ -115,7 +116,7 @@ def predict_stock_prices(hidden_size, num_layers, sequence_length, num_epochs, n
         #storer.append(f'The next stock price for {stock_ticker} will be: {predicted_features[3]}')  # Close price is at index 3
         #print(f'The next stock price for {stock_ticker} will be: {predicted_features[3]}')  # Close price is at index 3)
         #features = ['open', 'high', 'low', 'close', 'volume'] open is 0:::: 3 is close 
-        storer[stock_ticker] = predicted_features[0]
+        storer[stock_ticker] = predicted_features[3]
 
     # Close the database connection
     conn.close()
@@ -160,6 +161,7 @@ hyperparameters = [
     [58, 2, 15, 50, 3],
     [59, 2, 16, 50, 3]
 ]
+
 #hiddensize at least 60
 #num_layers at least 2
 #sequence length 
@@ -167,11 +169,13 @@ hyperparameters = [
 #lag days tbd 
 
 #this is j shorter for testing 
-#hyperparameters = [
-   # [10, 3, 25, 100, 8],
-   # [10, 3, 30, 100, 3],
-   # [10, 2, 30, 100, 3]
-#]
+'''
+hyperparameters = [
+    [10, 3, 25, 50, 8],
+    [10, 3, 30, 50, 3],
+    [10, 2, 30, 50, 3]
+]
+'''
 #we could make this like a crazy dict but honestly im too damn lazy to think hahahah!!!!
 hidden_size = 0
 num_layers = 1
@@ -180,6 +184,7 @@ num_epochs = 3
 num_lag_features = 4
 stocklist = ["RTX", 'NOC', 'GD', 'LDOS', 'KBR', 'BWXT', 'RKLB', 'LMT']
 realPrices = [79, 473.6, 238.6, 92.3, 57.54, 74.3, 4.2, 444] #THESE ARE OPEN PRICES
+real_prices_dict = {stock_ticker: real_price for stock_ticker, real_price in zip(stocklist, realPrices)}
 iterator = 0
 test_date = datetime(2023, 10, 29).date()
 difference_df = pd.DataFrame(columns=stocklist)
@@ -189,8 +194,18 @@ df = pd.DataFrame()
 for row in hyperparameters:
     iterator += 1
     df["MODEL " + str(iterator)] = predict_stock_prices(row[0], row[1], row[2], row[3], row[4], test_date) #test_date = datetime(2023, 10, 30).date()
-    differences = {stock_ticker: row[f"MODEL {i+1}"] - real_price for i, (stock_ticker, real_price) in enumerate(zip(stocklist, realPrices))}
-    difference_df = difference_df.append(differences, ignore_index=True)
+    #fills out normal df
+
+    for ticker in stocklist:
+        tempDict = {}
+        tempDict[ticker] = df.at[ticker, "MODEL " + str(iterator)] - real_prices_dict[ticker]
+
+    #now we should have a dict for each row, now to add it to the diffierence thing 
+    #difference_df = difference_df.append(tempDict, ignore_index=True)
+    #difference_df.index = ["MODEL " + str(iterator)]
+    temp_df = pd.DataFrame(tempDict, index=["MODEL " + str(iterator)])
+    difference_df = pd.concat([difference_df, temp_df])
+
 
     #OPTIMUS PRIME
     #I swear we're close we just need to random forrest this bad boy 
