@@ -56,7 +56,7 @@ def create_table(input_count=None):
     iterator_values = range(count)
     time_values = [(start_time + timedelta(minutes=i * 5)).strftime("%H%M") for i in iterator_values]
 
-    columns = ', '.join([f'open_{i} TEXT, close_{i} TEXT, high_{i} TEXT, hours_mins_{i} TEXT, unix_time_{i} TEXT' for i in time_values])
+    columns = ', '.join([f'open_{i} TEXT, close_{i} TEXT, high_{i} TEXT, low_{i} TEXT, unix_time_{i} TEXT' for i in time_values])
     #create the table based on the number of columns
     create_table_query = f'''
         CREATE TABLE IF NOT EXISTS appl (
