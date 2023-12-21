@@ -36,7 +36,6 @@ def get_intraday(date: str):
         print(f"Error: {response.status_code} - {response.text}")
 
 def create_table(input_count=None):
-    print("starting create_table function - also free Palestine")
     if input_count is None:
         #init to 170, else read the file
         count = 158
@@ -53,13 +52,17 @@ def create_table(input_count=None):
     #print("COUNT: " + str(count))
 
     #this line should remain unchanged, but the 'count' should change conditionally 
-    columns = ', '.join([f'open{i} TEXT, close{i} TEXT, high{i} TEXT, time{i} TEXT' for i in range(count)])
+    start_time = datetime.strptime("09:00", "%H:%M")
+    iterator_values = range(count)
+    time_values = [(start_time + timedelta(minutes=i * 5)).strftime("%H%M") for i in iterator_values]
+
+    columns = ', '.join([f'open_{i} TEXT, close_{i} TEXT, high_{i} TEXT, hours_mins_{i} TEXT, unix_time_{i} TEXT' for i in time_values])
     #create the table based on the number of columns
     create_table_query = f'''
         CREATE TABLE IF NOT EXISTS appl (
             id INTEGER PRIMARY KEY,
             date TEXT,
-            prevclose TEXT,
+            prev_close TEXT,
             {columns}
         )
     '''
@@ -74,8 +77,7 @@ def create_table(input_count=None):
 def unix_to_real(unix: int):
     seconds = unix / 1000
     dt_object = datetime.utcfromtimestamp(seconds)
-    print(dt_object)
-    twenty_four = dt_object.strftime('%H:%M:%S')
+    twenty_four = dt_object.strftime('%H:%M')
     print(twenty_four)
     return twenty_four
 

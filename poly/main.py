@@ -8,5 +8,5 @@ target_date = '2023-12-01'
 
 
 # Replace 'your_file.txt' with the actual path or name of your text file
-#create_table()
+create_table()
 yeet = unix_to_real(1701474000000)
