@@ -5,7 +5,7 @@ import yfinance as yf
 from datetime import datetime, timedelta, date
 import pandas as pd
 from statsmodels.tsa.statespace.sarimax import SARIMAX
-from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 import matplotlib.pyplot as plt
 
 def stonkz1():
@@ -32,10 +32,78 @@ def stonkz1():
     stock_data['day_of_week'] = stock_data['date'].dt.dayofweek
     stock_data['month'] = stock_data['date'].dt.month
     stock_data['year'] = stock_data['date'].dt.year
-    stock_data['close_0900'] = pd.to_numeric(stock_data['close_0900'], errors='coerce')
-    stock_data['daily_return'] = stock_data['close_0900'].pct_change()
 
-    print(stock_data)
+    #convert all to numeric
+    numeric_columns = [col for col in stock_data.columns if col not in ['id', 'date']]
+    stock_data[numeric_columns] = stock_data[numeric_columns].apply(pd.to_numeric, errors='coerce')
+    
+    #calculate daily return and add that back as a column
+    daily_return = stock_data['close_0900'].pct_change()
+    stock_data = pd.concat([stock_data, daily_return.rename('daily_return')], axis=1)
+
+    #create formatted_stocks, which is more numbers to calculate moving averages
+    exclude_columns = ['id', 'date', 'day_of_week', 'month', 'year']
+    formatted_stocks = stock_data.copy()
+    formatted_stocks = formatted_stocks.drop(columns=exclude_columns)
+
+    moving_averages_df = pd.DataFrame()
+    moving_averages_dict = {}
+
+    for column in formatted_stocks:
+        moving_averages_dict[f'ma_{column}'] = formatted_stocks[column].rolling(window=5).mean()
+
+    # Concatenate the original DataFrame with the new DataFrame containing moving averages
+    #moving_averages_df = pd.concat([moving_averages_df, moving_averages], axis=1)
+    moving_averages_df = pd.DataFrame(moving_averages_dict)
+
+    moving_averages_df = moving_averages_df.dropna()
+    print(moving_averages_df)
+    exit()
+
+
+
+
+    # Assuming 'close_0900' is the column you want to predict
+    y = formatted_stocks['close_0900']
+
+    # Train-test split
+    train_size = int(len(y) * 0.8)
+    train, test = y[:train_size], y[train_size:]
+
+    # Fit a SARIMA model
+    order = (1, 1, 1)  # Replace with appropriate order
+    seasonal_order = (1, 1, 1, 12)  # Replace with appropriate seasonal order
+
+    model = SARIMAX(train, order=order, seasonal_order=seasonal_order)
+    result = model.fit(disp=False)
+
+    # Make predictions on the test set
+    predictions = result.get_forecast(steps=len(test))
+    predicted_mean = predictions.predicted_mean
+
+    # Evaluate the model
+    mse = mean_squared_error(test, predicted_mean)
+    print(f'Mean Squared Error: {mse}')
+
+    # Plot the actual vs predicted values
+    plt.plot(y.index, y, label='Actual')
+    plt.plot(test.index, predicted_mean, label='Predicted', color='red')
+    plt.legend()
+    plt.show()
+
+    exit()
+
+
+
+
+
+
+
+
+
+
+
+
     exit()
 
 
