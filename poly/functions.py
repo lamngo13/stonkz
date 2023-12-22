@@ -196,16 +196,25 @@ def hardcode_first():
     conn.commit()
     conn.close()
 
-def prev(id: int):
+def prev(id: int, year: int, month: int, day: int):
+    #get date from args
+    the_date = datetime(year, month, day)
+    the_date = the_date.strftime("%m/%d/%Y")
+    the_date = f"'{the_date}'"
+
+    #get previous id and also current id
     prev_id = id - 1
-    id = str(id)
-    #prev close is 189.95
+    id = f"'{id}'"
+    
     conn = sqlite3.connect("appl1.db")
     cursor = conn.cursor()
     prev_query_string = f"SELECT close_2205 FROM appl1 WHERE id = {prev_id}"
     cursor.execute(prev_query_string)
     result = cursor.fetchone()
-    print(result[0])
+    prev_close_string = str(result[0])
+    prev_close_string = f"'{prev_close_string}'"
+    insert_query = f"UPDATE appl1 SET date = {the_date}, prev_close = {prev_close_string} WHERE id = {id}"
+    cursor.execute(insert_query)
     conn.commit()
     conn.close()
 
