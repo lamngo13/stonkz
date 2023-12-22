@@ -196,12 +196,16 @@ def hardcode_first():
     conn.commit()
     conn.close()
 
-def prev():
+def prev(id: int):
+    prev_id = id - 1
+    id = str(id)
     #prev close is 189.95
     conn = sqlite3.connect("appl1.db")
     cursor = conn.cursor()
-    #TODO
-    #cursor.execute(insert_query)
+    prev_query_string = f"SELECT close_2205 FROM appl1 WHERE id = {prev_id}"
+    cursor.execute(prev_query_string)
+    result = cursor.fetchone()
+    print(result[0])
     conn.commit()
     conn.close()
 

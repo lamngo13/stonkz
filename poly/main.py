@@ -1,12 +1,15 @@
 from functions import *
 import json
 
-#189.95 is the close for apple as of the last day of november
+#get data for a specific day
+#target_date = '2023-12-15'
+#get_intraday(target_date, 'dec15')
 
-target_date = '2023-12-04'
-get_intraday(target_date, 'dec4')
 
 
-#first_row()
+into_db("dec15")
+#prev(2)
+
+
 
 
