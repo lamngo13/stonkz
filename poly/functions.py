@@ -5,8 +5,8 @@ import yfinance as yf
 from datetime import datetime, timedelta, date
 
 # Replace '20230105' with the desired date in the format YYYYMMDD
-target_date = '2023-12-01'
-def get_intraday(date: str):
+#target_date = '2023-12-01'
+def get_intraday(date: str, filename: str):
     print("FROM THE RIVER TO THE SEA")
     #YYYYMMDD
     #ex '2023-12-01'
@@ -14,7 +14,7 @@ def get_intraday(date: str):
     symbol = 'AAPL'
 
     #gets intraday data for a single given day
-    endpoint_url = f'https://api.polygon.io/v2/aggs/ticker/{symbol}/range/5/minute/{target_date}/{target_date}?unadjusted=false&apiKey={api_key}'
+    endpoint_url = f'https://api.polygon.io/v2/aggs/ticker/{symbol}/range/5/minute/{date}/{date}?unadjusted=false&apiKey={api_key}'
 
     # Make the API request
     response = requests.get(endpoint_url)
@@ -26,10 +26,10 @@ def get_intraday(date: str):
         print(data)
 
         # Write the response to a text file named 'a.txt'
-        with open('a.txt', 'w') as file:
+        with open(f'{filename}.txt', 'w') as file:
             file.write(json.dumps(data, indent=4))
 
-        print("Data saved to a.txt.")
+        print(f"Data saved to {filename}.txt.")
         return data
     else:
         # Print an error message if the request was not successful
@@ -126,25 +126,64 @@ def first_row():
     while (len(columns_to_insert) < len(values)):
         values.pop()
 
-    '''
-    print(values)
-    print(columns_to_insert)
-    print(len(values))
-    print(len(columns_to_insert))
-    exit()
-    '''
 
-    # Construct the INSERT query
     insert_query = f"INSERT INTO appl1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
-
-    # Execute the INSERT query
     cursor.execute(insert_query)
-
-
     conn.commit()
     conn.close()
 
-def hardcode():
+def into_db(file_name):
+    file_path = f'{file_name}.txt'
+        # Open the file and read its contents
+    with open(file_path, 'r') as file:
+        fc = json.load(file)
+
+    res = fc['results']
+    conn = sqlite3.connect("appl1.db")
+    cursor = conn.cursor()
+
+    columns_to_insert = []
+    start_time = datetime.strptime("09:00", "%H:%M")
+    end_time = datetime.strptime("22:05", "%H:%M")
+    interval = timedelta(minutes=5)
+    current_time = start_time
+    iterator_values = []
+    while current_time <= end_time:
+        iterator_values.append(current_time.strftime("%H%M"))
+        current_time += interval
+
+    # append to using columns
+    for value in iterator_values:
+        columns_to_insert.append("open_"+str(value))
+        columns_to_insert.append("close_"+str(value))
+        columns_to_insert.append("high_"+str(value))
+        columns_to_insert.append("low_"+str(value))
+        columns_to_insert.append("volume_"+str(value))
+        columns_to_insert.append("N_"+str(value))
+        columns_to_insert.append("unix_time_"+str(value))
+
+    values = []
+    for row in res:
+        values.append(row['o'])
+        values.append(row['c'])
+        values.append(row['h'])
+        values.append(row['l'])
+        values.append(row['v'])
+        values.append(row['n'])
+        values.append(row['t'])
+
+    values = [str(value) for value in values]  # Convert values to strings
+    #cut down the values in our dataset
+    while (len(columns_to_insert) < len(values)):
+        values.pop()
+
+
+    insert_query = f"INSERT INTO appl1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
+    cursor.execute(insert_query)
+    conn.commit()
+    conn.close()
+
+def hardcode_first():
     #prev close is 189.95
     conn = sqlite3.connect("appl1.db")
     cursor = conn.cursor()
@@ -154,6 +193,15 @@ def hardcode():
     the_date = f"'{the_date}'"
     insert_query = f"UPDATE appl1 SET date = {the_date}, prev_close = {prev_close} WHERE id = 1"
     cursor.execute(insert_query)
+    conn.commit()
+    conn.close()
+
+def prev():
+    #prev close is 189.95
+    conn = sqlite3.connect("appl1.db")
+    cursor = conn.cursor()
+    #TODO
+    #cursor.execute(insert_query)
     conn.commit()
     conn.close()
 
