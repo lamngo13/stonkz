@@ -57,18 +57,23 @@ def stonkz1():
     moving_averages_df = pd.DataFrame(moving_averages_dict)
 
     moving_averages_df = moving_averages_df.dropna()
-    print(moving_averages_df)
-    exit()
 
 
 
 
-    # Assuming 'close_0900' is the column you want to predict
-    y = formatted_stocks['close_0900']
+    #NOW ONTO AI STUFF JEEZ LOUISE
+    #y = formatted_stocks['close_0900']
+    y = moving_averages_df['ma_close_2205']
+    #print(y)
+    #exit()
 
     # Train-test split
     train_size = int(len(y) * 0.8)
+    #train_size = int(len(y) * 0.9)
     train, test = y[:train_size], y[train_size:]
+    print(train)
+    print("ASD:FKADSJ")
+    print(test)
 
     # Fit a SARIMA model
     order = (1, 1, 1)  # Replace with appropriate order
@@ -85,7 +90,9 @@ def stonkz1():
     mse = mean_squared_error(test, predicted_mean)
     print(f'Mean Squared Error: {mse}')
 
+
     # Plot the actual vs predicted values
+    import matplotlib.pyplot as plt
     plt.plot(y.index, y, label='Actual')
     plt.plot(test.index, predicted_mean, label='Predicted', color='red')
     plt.legend()
