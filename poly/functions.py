@@ -144,13 +144,19 @@ def first_row():
     conn.commit()
     conn.close()
 
-'''
-# Sample data
-values_to_insert = [1, 2, 3, 4, 5]
+def hardcode():
+    #prev close is 189.95
+    conn = sqlite3.connect("appl1.db")
+    cursor = conn.cursor()
+    prev_close = "189.95"
+    the_date = datetime(2023, 12, 1)
+    the_date = the_date.strftime("%m/%d/%Y")
+    the_date = f"'{the_date}'"
+    insert_query = f"UPDATE appl1 SET date = {the_date}, prev_close = {prev_close} WHERE id = 1"
+    cursor.execute(insert_query)
+    conn.commit()
+    conn.close()
 
-# Construct the INSERT query
-insert_query = f"INSERT INTO your_table_name ({', '.join(['bruh' + str(i) for i in range(1, len(values_to_insert) + 1)])}) VALUES ({', '.join(['?' for _ in values_to_insert])})"
-'''
 
 def parsing(date:str):
     print("FROM THE RIVER TO THE SEA")

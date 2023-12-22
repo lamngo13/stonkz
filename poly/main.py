@@ -7,8 +7,7 @@ target_date = '2023-12-01'
 #get_intraday(target_date)
 
 
-# Replace 'your_file.txt' with the actual path or name of your text file
-create_table()
-#yeet = unix_to_real(1701474000000)
-first_row()
+#create_table()
+#first_row()
+hardcode()
 
