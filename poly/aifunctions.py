@@ -29,10 +29,24 @@ def stonkz1():
     # List of columns to apply moving average (excluding 'date' and 'id')
     columns_to_smooth = [col for col in stock_data.columns if col not in ['date', 'id']]
 
-    # Apply a 5-day moving average to each relevant column
-    for column in columns_to_smooth:
-        stock_data[f'ma_{column}'] = stock_data[column].rolling(window=5).mean()
+    stock_data['day_of_week'] = stock_data['date'].dt.dayofweek
+    stock_data['month'] = stock_data['date'].dt.month
+    stock_data['year'] = stock_data['date'].dt.year
+    stock_data['close_0900'] = pd.to_numeric(stock_data['close_0900'], errors='coerce')
+    stock_data['daily_return'] = stock_data['close_0900'].pct_change()
 
+    print(stock_data)
+    exit()
+
+
+    # Apply a 5-day moving average to each relevant column
+    moving_averages = pd.DataFrame()
+
+    for column in columns_to_smooth:
+        moving_averages[f'ma_{column}'] = stock_data[column].rolling(window=5).mean()
+
+    # Concatenate the original DataFrame with the new DataFrame containing moving averages
+    stock_data = pd.concat([stock_data, moving_averages], axis=1)
 
     print(stock_data)
     exit()
