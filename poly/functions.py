@@ -56,10 +56,10 @@ def create_table(input_count=None):
     iterator_values = range(count)
     time_values = [(start_time + timedelta(minutes=i * 5)).strftime("%H%M") for i in iterator_values]
 
-    columns = ', '.join([f'open_{i} TEXT, close_{i} TEXT, high_{i} TEXT, low_{i} TEXT, unix_time_{i} TEXT' for i in time_values])
+    columns = ', '.join([f'open_{i} TEXT, close_{i} TEXT, high_{i} TEXT, low_{i} TEXT, volume_{i} TEXT, N_{i} TEXT, unix_time_{i} TEXT' for i in time_values])
     #create the table based on the number of columns
     create_table_query = f'''
-        CREATE TABLE IF NOT EXISTS appl (
+        CREATE TABLE IF NOT EXISTS appl1 (
             id INTEGER PRIMARY KEY,
             date TEXT,
             prev_close TEXT,
@@ -68,7 +68,7 @@ def create_table(input_count=None):
     '''
     print(create_table_query)
     #ok now actually create the database
-    conn = sqlite3.connect('appl.db')
+    conn = sqlite3.connect('appl1.db')
     cursor = conn.cursor()
     cursor.execute(create_table_query)
     conn.commit()
@@ -81,6 +81,43 @@ def unix_to_real(unix: int):
     print(twenty_four)
     return twenty_four
 
+def first_row():
+    file_path = 'a.txt'
+        # Open the file and read its contents
+    with open(file_path, 'r') as file:
+        fc = json.load(file)
+
+    res = fc['results']
+    conn = sqlite3.connect("appl1.db")
+    cursor = conn.cursor()
+
+    start_time = 900
+    end_time = 2205
+    interval = 5
+
+    columns_to_insert = []
+    # Generate the iterator
+    iterator_values = range(start_time, end_time + 1, interval)
+
+    # Display the iterator values
+    for value in iterator_values:
+        columns_to_insert.append("open_"+str(value))
+        columns_to_insert.append("close_"+str(value))
+        columns_to_insert.append("high_"+str(value))
+        columns_to_insert.append("low_"+str(value))
+        columns_to_insert.append("volume_"+str(value))
+        columns_to_insert.append("N_"+str(value))
+        columns_to_insert.append("unix_time_"+str(value))
+
+    print(columns_to_insert)
+
+'''
+# Sample data
+values_to_insert = [1, 2, 3, 4, 5]
+
+# Construct the INSERT query
+insert_query = f"INSERT INTO your_table_name ({', '.join(['bruh' + str(i) for i in range(1, len(values_to_insert) + 1)])}) VALUES ({', '.join(['?' for _ in values_to_insert])})"
+'''
 
 def parsing(date:str):
     print("FROM THE RIVER TO THE SEA")
