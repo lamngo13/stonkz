@@ -91,15 +91,17 @@ def first_row():
     conn = sqlite3.connect("appl1.db")
     cursor = conn.cursor()
 
-    start_time = 900
-    end_time = 2205
-    interval = 5
-
     columns_to_insert = []
-    # Generate the iterator
-    iterator_values = range(start_time, end_time + 1, interval)
+    start_time = datetime.strptime("09:00", "%H:%M")
+    end_time = datetime.strptime("22:05", "%H:%M")
+    interval = timedelta(minutes=5)
+    current_time = start_time
+    iterator_values = []
+    while current_time <= end_time:
+        iterator_values.append(current_time.strftime("%H%M"))
+        current_time += interval
 
-    # Display the iterator values
+    # append to using columns
     for value in iterator_values:
         columns_to_insert.append("open_"+str(value))
         columns_to_insert.append("close_"+str(value))
@@ -109,7 +111,38 @@ def first_row():
         columns_to_insert.append("N_"+str(value))
         columns_to_insert.append("unix_time_"+str(value))
 
+    values = []
+    for row in res:
+        values.append(row['o'])
+        values.append(row['c'])
+        values.append(row['h'])
+        values.append(row['l'])
+        values.append(row['v'])
+        values.append(row['n'])
+        values.append(row['t'])
+
+    values = [str(value) for value in values]  # Convert values to strings
+    #cut down the values in our dataset
+    while (len(columns_to_insert) < len(values)):
+        values.pop()
+
+    '''
+    print(values)
     print(columns_to_insert)
+    print(len(values))
+    print(len(columns_to_insert))
+    exit()
+    '''
+
+    # Construct the INSERT query
+    insert_query = f"INSERT INTO appl1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
+
+    # Execute the INSERT query
+    cursor.execute(insert_query)
+
+
+    conn.commit()
+    conn.close()
 
 '''
 # Sample data
