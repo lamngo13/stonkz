@@ -1,5 +1,6 @@
 from functions import *
 from aifunctions import *
+from truai import *
 import json
 
 #get data for a specific day
