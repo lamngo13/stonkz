@@ -12,18 +12,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
-from tensorflow import LTSM
-from tensorflow import keras
-from keras.layers import Dense
-from keras import layers
-from layers import LTSM
-from layers import Dense
-from keras import models
-import tensorflow as tf
-from tf.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import pandas as pd
+
+
+def create_sequences(data, sequence_length):
+    sequences = []
+    for i in range(len(data) - sequence_length):
+        sequence = data[i : (i+sequence_length)]
+        sequences.append(sequence)
+    return np.array(sequences)
 
 def getdfs():
     print("STONKZ")
@@ -77,8 +77,50 @@ def getdfs():
 
     #drop na for formatted_stocks
     formatted_stocks = formatted_stocks.dropna()
-    print(moving_averages_df)
+    #print(moving_averages_df)
 
 
 
     #NOW DO AI STUFF HEHE
+    target_col = "ma_open_0900"
+    features = moving_averages_df.drop(target_col, axis=1)
+    target = moving_averages_df[target_col]
+    # Split the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
+
+    # Create and train the model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # Make predictions on the test set
+    predictions = model.predict(X_test)
+
+    # Evaluate the model
+    mse = mean_squared_error(y_test, predictions)
+    print(f'Mean Squared Error: {mse}')
+
+    plt.figure(figsize=(10, 6))
+
+    # Plotting actual vs. predicted values
+    plt.scatter(y_test, predictions, color='blue', label='Actual vs. Predicted')
+    plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], linestyle='--', color='red', linewidth=2, label='Perfect Prediction')
+
+    plt.title('Actual vs. Predicted Stock Prices')
+    plt.xlabel('Actual Prices')
+    plt.ylabel('Predicted Prices')
+    plt.legend()
+    plt.show()
+
+
+
+
+    #mse = mean_squared_error(test_output, test_predictions)
+    #print(f'Mean Squared Error: {mse}')
+    #plt.plot(test_output, label='Actual')
+    #plt.plot(test_predictions, label='Predicted', linestyle='dashed')
+    #plt.legend()
+    #plt.show()
+
+
+
+
