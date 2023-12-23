@@ -64,6 +64,16 @@ def getdfs():
     formatted_stocks = stock_data.copy()
     formatted_stocks = formatted_stocks.drop(columns=exclude_columns)
 
+    #create formatted stocks but with data - this is 
+    #for visiulization and not actual stuffski
+    stocks_w_date = stock_data.copy()
+    exclude_columns = ['id', 'day_of_week', 'month', 'year']
+    stocks_w_date = stocks_w_date.drop(columns=exclude_columns)
+
+    #make stocks with date numeric
+    #numeric_columns = [col for col in stocks_w_date.columns if col not in ['id', 'date']]
+    #stocks_w_date[numeric_columns] = stocks_w_date[numeric_columns].apply(pd.to_numeric, errors='coerce')
+
     moving_averages_df = pd.DataFrame()
     moving_averages_dict = {}
 
@@ -74,18 +84,27 @@ def getdfs():
     #moving_averages_df = pd.concat([moving_averages_df, moving_averages], axis=1)
     moving_averages_df = pd.DataFrame(moving_averages_dict)
 
+    #drop nas for all
     moving_averages_df = moving_averages_df.dropna()
-
-    #drop na for formatted_stocks
     formatted_stocks = formatted_stocks.dropna()
+    stocks_w_date = stocks_w_date.dropna()
     #print(moving_averages_df)
 
 
 
     #NOW DO AI STUFF HEHE
     target_col = "ma_open_0900"
-    features = moving_averages_df.drop(target_col, axis=1)
-    target = moving_averages_df[target_col]
+    target_col = "open_0900"
+
+    #with moving averages dataset
+    #features = moving_averages_df.drop(target_col, axis=1)
+    #target = moving_averages_df[target_col]
+    print(formatted_stocks)
+
+    #with raw dataset
+    features = formatted_stocks.drop(target_col, axis=1)
+    target = formatted_stocks[target_col]
+
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=2)
     #random state is set to a number, I'm using 42 but let's experiment lol
@@ -108,11 +127,23 @@ def getdfs():
     plt.scatter(y_test, predictions, color='blue', label='Actual vs. Predicted')
     plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], linestyle='--', color='red', linewidth=2, label='Perfect Prediction')
 
-    plt.title('Actual vs. Predicted Stock Prices')
-    plt.xlabel('Actual Prices')
-    plt.ylabel('Predicted Prices')
+
+    #add back in date to X_test for visualization
+    X_test['date'] = stocks_w_date['date']
+    plt.figure(figsize=(15, 6))
+    plt.scatter(stocks_w_date['date'], stocks_w_date[target_col], color='blue', label='Actual Prices')
+    plt.scatter(X_test['date'], predictions, color='red', label='Predicted Prices')
+    plt.title('Stock Prices over Time')
+    plt.xlabel('Time')
+    plt.ylabel('Stock Price')
     plt.legend()
     plt.show()
+
+    #plt.title('Actual vs. Predicted Stock Prices')
+    #plt.xlabel('Actual Prices')
+    #plt.ylabel('Predicted Prices')
+    #plt.legend()
+    #plt.show()
 
 
 
