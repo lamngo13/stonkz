@@ -16,6 +16,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import pandas as pd
+import xgboost as xgb
 
 
 def create_sequences(data, sequence_length):
@@ -86,10 +87,12 @@ def getdfs():
     features = moving_averages_df.drop(target_col, axis=1)
     target = moving_averages_df[target_col]
     # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=2)
+    #random state is set to a number, I'm using 42 but let's experiment lol
 
     # Create and train the model
-    model = LinearRegression()
+    #model = LinearRegression()
+    model = xgb.XGBRFRegressor(objective='reg:squarederror')
     model.fit(X_train, y_train)
 
     # Make predictions on the test set
