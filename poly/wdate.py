@@ -99,37 +99,40 @@ def wdatee():
     #now I'm trying to predict the end of a day
     #target_col = "close_2205"
 
-    #with moving averages dataset
-    #features = moving_averages_df.drop(target_col, axis=1)
-    #target = moving_averages_df[target_col]
-    #print(formatted_stocks)
-
-    #stocks_w_date['day_of_year'] = pd.to_datetime(stocks_w_date['date']).dt.dayofyear
-    #print(stocks_w_date)
-
 
     #with raw dataset
     features = formatted_stocks.drop(target_col, axis=1)
     target = formatted_stocks[target_col]
 
     #HEREHERHERHERHERH WITH DATE
-    #features = stocks_w_date.drop(target_col, axis=1)
-    #target = stocks_w_date[target_col]
+    #take off date bc I don't want it in the calculation.
+    #date_column = stocks_w_date.pop('date')
+    features = stocks_w_date.drop(target_col, axis=1)
+    target = stocks_w_date[target_col]
     #optimus prime
     #print(stocks_w_date)
 
     # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=2)
+    #X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=2)
     #random state is set to a number, I'm using 42 but let's experiment lol
 
+    #better split, more chronological
+    split_date = int(len(features) * 0.8)
+    X_train, X_test = features[:split_date], features[split_date:]
+    y_train, y_test = target[:split_date], target[split_date:]
 
-    #print(X_test)
-
+    X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, shuffle=False)
+    #take off the date column for the calculation, but store it
+    X_train_date_col = X_train.pop('date')
+    X_test_date_col = X_test.pop('date')
+    stocks_w_date_date_col = stocks_w_date.pop('date')
 
     # Create and train the model
     #model = LinearRegression()
     model = xgb.XGBRFRegressor(objective='reg:squarederror')
     model.fit(X_train, y_train)
+    print(X_train)
+    exit()
 
     # Make predictions on the test set
     predictions = model.predict(X_test)
@@ -140,8 +143,15 @@ def wdatee():
 
 
     #add back in date to X_test for visualization
-    #ONLY FOR VISUALIZATION NOT ANY CALCULATION !!
-    X_test['date'] = stocks_w_date['date']
+    #ONLY FOR VISUALIZATION NOT ANY CALCULATION !!!!
+    stocks_w_date = pd.concat([stocks_w_date, stocks_w_date_date_col], axis=1)
+    X_test = pd.concat([X_test, X_test_date_col], axis=1)
+    X_test['date'] = pd.to_datetime(X_test['date'])
+    X_test['date'] = X_test['date'].dt.strftime('%m-%d')
+    stocks_w_date['date'] = pd.to_datetime(stocks_w_date['date'])
+    stocks_w_date['date'] = stocks_w_date['date'].dt.strftime('%m-%d')
+
+    
 
     #JUST SHOWING IMPORTANCE
     #Get feature importance
