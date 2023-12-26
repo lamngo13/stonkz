@@ -101,16 +101,16 @@ def getdfs():
     #target = moving_averages_df[target_col]
     #print(formatted_stocks)
 
-    stocks_w_date['day_of_year'] = pd.to_datetime(stocks_w_date['date']).dt.dayofyear
-    print(stocks_w_date)
-    exit()
+    #stocks_w_date['day_of_year'] = pd.to_datetime(stocks_w_date['date']).dt.dayofyear
+    #print(stocks_w_date)
+    #exit()
 
     #with raw dataset
     features = formatted_stocks.drop(target_col, axis=1)
     target = formatted_stocks[target_col]
 
-    features = stocks_w_date.drop(target_col, axis=1)
-    target = stocks_w_date[target_col]
+    #features = stocks_w_date.drop(target_col, axis=1)
+    #target = stocks_w_date[target_col]
     #optimus prime
     #print(stocks_w_date)
 
@@ -119,7 +119,7 @@ def getdfs():
     #random state is set to a number, I'm using 42 but let's experiment lol
 
 
-    print(X_test)
+    #print(X_test)
 
 
     # Create and train the model
@@ -151,23 +151,5 @@ def getdfs():
     plt.ylabel('Stock Price')
     plt.legend()
     plt.show()
-
-    #plt.title('Actual vs. Predicted Stock Prices')
-    #plt.xlabel('Actual Prices')
-    #plt.ylabel('Predicted Prices')
-    #plt.legend()
-    #plt.show()
-
-
-
-
-    #mse = mean_squared_error(test_output, test_predictions)
-    #print(f'Mean Squared Error: {mse}')
-    #plt.plot(test_output, label='Actual')
-    #plt.plot(test_predictions, label='Predicted', linestyle='dashed')
-    #plt.legend()
-    #plt.show()
-
-
 
 
