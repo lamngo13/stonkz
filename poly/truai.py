@@ -71,8 +71,8 @@ def getdfs():
     stocks_w_date = stocks_w_date.drop(columns=exclude_columns)
 
     #make stocks with date numeric
-    #numeric_columns = [col for col in stocks_w_date.columns if col not in ['id', 'date']]
-    #stocks_w_date[numeric_columns] = stocks_w_date[numeric_columns].apply(pd.to_numeric, errors='coerce')
+    numeric_columns = [col for col in stocks_w_date.columns if col not in ['id', 'date']]
+    stocks_w_date[numeric_columns] = stocks_w_date[numeric_columns].apply(pd.to_numeric, errors='coerce')
 
     moving_averages_df = pd.DataFrame()
     moving_averages_dict = {}
@@ -99,15 +99,28 @@ def getdfs():
     #with moving averages dataset
     #features = moving_averages_df.drop(target_col, axis=1)
     #target = moving_averages_df[target_col]
-    print(formatted_stocks)
+    #print(formatted_stocks)
+
+    stocks_w_date['day_of_year'] = pd.to_datetime(stocks_w_date['date']).dt.dayofyear
+    print(stocks_w_date)
+    exit()
 
     #with raw dataset
     features = formatted_stocks.drop(target_col, axis=1)
     target = formatted_stocks[target_col]
 
+    features = stocks_w_date.drop(target_col, axis=1)
+    target = stocks_w_date[target_col]
+    #optimus prime
+    #print(stocks_w_date)
+
     # Split the data into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.2, random_state=2)
     #random state is set to a number, I'm using 42 but let's experiment lol
+
+
+    print(X_test)
+
 
     # Create and train the model
     #model = LinearRegression()
