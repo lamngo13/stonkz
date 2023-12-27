@@ -1,0 +1,9 @@
+the idea is I want to create a new feature (which will be the target prediction)
+that feature is just the opening price of the next day
+
+GENERAL CONCEPT:
+I'm not sold on the idea that weights are enough
+Rather, I'm thinking of pentupling the feature set 
+such that the past 5 days' values are added in as features as well
+
+Also in general, I want to have more data for the dataset. 

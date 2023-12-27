@@ -3,6 +3,7 @@ import json
 import sqlite3
 import yfinance as yf
 from datetime import datetime, timedelta, date
+import time
 
 # Replace '20230105' with the desired date in the format YYYYMMDD
 #target_date = '2023-12-01'
@@ -242,3 +243,64 @@ def parsing(date:str):
         volume TEXT
         )
         '''
+    
+#starting at jan 1 2023
+def autofiller():
+    #this is a counter for my limited api key stuff
+    counter = 1
+    api_key = "TRxer9Mhmo64ERvyE5mRbrQI69Atdo7v"
+    symbol = 'AAPL'
+
+    start_date = datetime(2023, 1, 1)
+    end_date = datetime(2023, 1, 5)
+
+    current_date = start_date
+
+    while current_date <= end_date:
+
+        #idle if reaching api limit
+        if ((counter % 5) == 0):
+            time.sleep(61)
+        #formate date for api
+        formatted_current_date = current_date.strftime('%Y-%m-%d')
+
+        #create file name
+        filename = str(formatted_current_date)
+        #MAKE THE CALL HERE
+        endpoint_url = f'https://api.polygon.io/v2/aggs/ticker/{symbol}/range/5/minute/{formatted_current_date}/{formatted_current_date}?unadjusted=false&apiKey={api_key}'
+
+        # Make the API request
+        response = requests.get(endpoint_url)
+
+        # Check if the request was successful 
+        if response.status_code == 200:
+            # Parse the response JSON data
+            data = response.json()
+            if (data['resultsCount']):
+                if (int(data['resultsCount']) > 50):
+                    #do the stuff
+                    # Write the response to a text file named 'a.txt'
+                    with open(f'{filename}.txt', 'w') as file:
+                        file.write(json.dumps(data, indent=4))
+
+                    print(f"Data saved to {filename}.txt.")
+                    #IF THIS IS THE CASE THEN WRITE TO DB!!!!
+                    if (len(str(filename)) > 6):
+                        #then we proceed
+                        into_db(filename)
+                else:
+                    print("result count is < 50 for " + str(formatted_current_date))
+            else:
+                print("resultCount does not exist! for " + str(formatted_current_date))
+        else:
+            # Print an error message if the request was not successful
+            print(f"Error: {response.status_code} - {response.text}")
+
+            
+        #while condition
+        #should be inside while loop btw
+        current_date += timedelta(days=1)
+        #increment counter for api limit
+        counter = counter + 1
+
+    print("DONZO")

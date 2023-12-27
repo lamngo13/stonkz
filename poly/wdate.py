@@ -131,8 +131,6 @@ def wdatee():
     #model = LinearRegression()
     model = xgb.XGBRFRegressor(objective='reg:squarederror')
     model.fit(X_train, y_train)
-    print(X_train)
-    exit()
 
     # Make predictions on the test set
     predictions = model.predict(X_test)
