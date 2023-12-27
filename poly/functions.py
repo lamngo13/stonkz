@@ -251,8 +251,8 @@ def autofiller():
     api_key = "TRxer9Mhmo64ERvyE5mRbrQI69Atdo7v"
     symbol = 'AAPL'
 
-    start_date = datetime(2023, 1, 1)
-    end_date = datetime(2023, 1, 5)
+    start_date = datetime(2023, 7, 1)
+    end_date = datetime(2023, 11, 30)
 
     current_date = start_date
 
@@ -279,15 +279,13 @@ def autofiller():
             if (data['resultsCount']):
                 if (int(data['resultsCount']) > 50):
                     #do the stuff
+                    print("writing for date: " + str(formatted_current_date))
                     # Write the response to a text file named 'a.txt'
                     with open(f'{filename}.txt', 'w') as file:
                         file.write(json.dumps(data, indent=4))
 
                     print(f"Data saved to {filename}.txt.")
                     #IF THIS IS THE CASE THEN WRITE TO DB!!!!
-                    if (len(str(filename)) > 6):
-                        #then we proceed
-                        into_db(filename)
                 else:
                     print("result count is < 50 for " + str(formatted_current_date))
             else:
@@ -304,3 +302,32 @@ def autofiller():
         counter = counter + 1
 
     print("DONZO")
+
+
+def hard_delete(zid):
+    id = str(zid)
+    # Connect to the SQLite database
+    conn = sqlite3.connect('appl1.db')  # Replace 'your_database.db' with your actual database file
+
+    # Create a cursor
+    cursor = conn.cursor()
+
+    try:
+        # Define the DELETE query
+        delete_query = f"DELETE FROM appl1 WHERE id = ?"
+
+        # Execute the query with the provided ID
+        cursor.execute(delete_query, (id,))
+
+        # Commit the changes to the database
+        conn.commit()
+
+        print(f"Row with ID {id} deleted successfully.")
+
+    except sqlite3.Error as e:
+        print(f"Error deleting row: {e}")
+
+    finally:
+        # Close the cursor and connection
+        cursor.close()
+        conn.close()
