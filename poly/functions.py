@@ -251,7 +251,7 @@ def autofiller():
     api_key = "TRxer9Mhmo64ERvyE5mRbrQI69Atdo7v"
     symbol = 'AAPL'
 
-    start_date = datetime(2023, 7, 1)
+    start_date = datetime(2023, 7, 29)
     end_date = datetime(2023, 11, 30)
 
     current_date = start_date
