@@ -4,6 +4,7 @@ import sqlite3
 import yfinance as yf
 from datetime import datetime, timedelta, date
 import time
+import os
 
 # Replace '20230105' with the desired date in the format YYYYMMDD
 #target_date = '2023-12-01'
@@ -133,6 +134,31 @@ def first_row():
     conn.commit()
     conn.close()
 
+def mass_txt_db():
+    start_date = datetime(2023, 1, 3)
+    #jan 1 and 2 were weekends
+    end_date = datetime(2023, 11, 30)
+    end_date = datetime(2023, 1, 4)
+
+    # Define the step (1 day in this case)
+    step = timedelta(days=1)
+
+    # Loop through dates
+    current_date = start_date
+    while current_date <= end_date:
+        date_string = current_date.strftime("%Y-%m-%d")
+        file_path = f"{date_string}.txt"
+
+        if os.path.exists(file_path) and os.path.getsize(file_path) > 100:
+            into_db(date_string)
+        else:
+            print(f"The file {file_path} does not exist or is empty.")
+
+        #while condition, end while loop after
+        current_date += step
+
+        
+
 def into_db(file_name):
     file_path = f'{file_name}.txt'
         # Open the file and read its contents
@@ -144,6 +170,8 @@ def into_db(file_name):
     cursor = conn.cursor()
 
     columns_to_insert = []
+    values = []
+
     start_time = datetime.strptime("09:00", "%H:%M")
     end_time = datetime.strptime("22:05", "%H:%M")
     interval = timedelta(minutes=5)
@@ -163,7 +191,6 @@ def into_db(file_name):
         columns_to_insert.append("N_"+str(value))
         columns_to_insert.append("unix_time_"+str(value))
 
-    values = []
     for row in res:
         values.append(row['o'])
         values.append(row['c'])
@@ -173,13 +200,27 @@ def into_db(file_name):
         values.append(row['n'])
         values.append(row['t'])
 
+    
+
     values = [str(value) for value in values]  # Convert values to strings
     #cut down the values in our dataset
     while (len(columns_to_insert) < len(values)):
         values.pop()
 
+    #hardcode date into here
+    parsed_date = datetime.strptime(file_name, "%Y-%m-%d")
+    formatted_date = parsed_date.strftime("%m/%d/%Y")
+    columns_to_insert.append("date")
+    values.append(str(formatted_date))
+    #print(len(columns_to_insert))
+    #print(len(values))
+    #print(columns_to_insert)
+    print(values)
+    exit()
 
     insert_query = f"INSERT INTO appl1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
+    #print(insert_query)
+    #exit()
     cursor.execute(insert_query)
     conn.commit()
     conn.close()
@@ -246,6 +287,7 @@ def parsing(date:str):
     
 #starting at jan 1 2023
 def autofiller():
+    #USE THIS TO MASS FILL TEXT FILES WITH STOCK DATA
     #this is a counter for my limited api key stuff
     counter = 1
     api_key = "TRxer9Mhmo64ERvyE5mRbrQI69Atdo7v"

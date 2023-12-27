@@ -17,7 +17,10 @@ import json
 #data_holder = get_intraday(target_date, 'dec12')
 #print(data_holder['resultsCount'])
 
-autofiller()
+#TODO FIND OUT HOW TO LOAD TXT INTO DB WITH DATES
+
+#mass_txt_db()
+hard_delete(17)
 
 
 
