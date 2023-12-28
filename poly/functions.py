@@ -287,7 +287,7 @@ def orderer():
     query = '''
         CREATE TABLE temp_table AS
         SELECT * FROM appl1
-        ORDER BY DATE(unix_time_0900) ASC;
+        ORDER BY DATE(date) ASC;
         
         DROP TABLE appl1;
         
@@ -297,16 +297,6 @@ def orderer():
     # Execute the query
     cursor.executescript(query)
     conn.commit()
-
-    # Fetch the results if needed
-    cursor.execute("SELECT * FROM ALLONE")
-    results = cursor.fetchall()
-
-    # Process the results as needed
-    for row in results:
-        print(row)
-
-    # Close the connection
     conn.close()
 
 def date_adder():
@@ -319,8 +309,10 @@ def date_adder():
         result = cursor.fetchone()
         result = int(int(str(result[0]))/1000)
         dt_object = datetime.utcfromtimestamp(result)
-        date_string = dt_object.strftime("%m-%d-%Y")
-        update_query = f"UPDATE appl1 SET date = {the_date}, prev_close = {prev_close_string} WHERE id = {id}"
+        date_string = dt_object.strftime("%m/%d/%Y")
+        date_string = f"'{date_string}'"
+        update_query = f"UPDATE appl1 SET date = {date_string} WHERE id = {i}"
+        print(update_query)
 
         cursor.execute(update_query)
         conn.commit()
