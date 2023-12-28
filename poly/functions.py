@@ -135,10 +135,13 @@ def first_row():
     conn.close()
 
 def mass_txt_db():
-    start_date = datetime(2023, 1, 3)
+    #TODO TODO TODO 
+    #we need 07-03 to 11-30 inclusive
+    start_date = datetime(2023, 7, 3)
+    start_date = datetime(2023, 7, 2)
     #jan 1 and 2 were weekends
-    end_date = datetime(2023, 11, 30)
-    end_date = datetime(2023, 1, 30) #make this like 10 j for jan for testing
+    end_date = datetime(2023, 11, 30) #make this like 10 j for jan for testing
+    start_date = datetime(2023, 7, 3)
 
     # Define the step (1 day in this case)
     step = timedelta(days=1)
@@ -208,14 +211,20 @@ def into_db(file_name):
         values.append(row['t'])
 
     
+    print("lencol: " + str(len(columns_to_insert)))
+    print("lenvals: " + str(len(values)))
 
     values = [str(value) for value in values]  # Convert values to strings
     #cut down the values in our dataset
     while (len(columns_to_insert) < len(values)):
         values.pop()
 
+    print("post pop:")
+    print("lencol: " + str(len(columns_to_insert)))
+    print("lenvals: " + str(len(values)))
+
     #hardcode date into here
-        '''
+    '''
     parsed_date = datetime.strptime(file_name, "%Y-%m-%d")
     formatted_date = parsed_date.strftime("%m/%d/%Y")
     columns_to_insert.append("date")
@@ -248,6 +257,78 @@ def hardcode_first():
     conn.close()
 
 def prev(id: int, year: int, month: int, day: int):
+    #get date from args
+    the_date = datetime(year, month, day)
+    the_date = the_date.strftime("%m/%d/%Y")
+    the_date = f"'{the_date}'"
+
+    #get previous id and also current id
+    prev_id = id - 1
+    id = f"'{id}'"
+    
+    conn = sqlite3.connect("appl1.db")
+    cursor = conn.cursor()
+    prev_query_string = f"SELECT close_2205 FROM appl1 WHERE id = {prev_id}"
+    cursor.execute(prev_query_string)
+    result = cursor.fetchone()
+    prev_close_string = str(result[0])
+    prev_close_string = f"'{prev_close_string}'"
+    insert_query = f"UPDATE appl1 SET date = {the_date}, prev_close = {prev_close_string} WHERE id = {id}"
+    cursor.execute(insert_query)
+    conn.commit()
+    conn.close()
+
+def orderer():
+    print("sorting by unix_time_0900")
+    conn = sqlite3.connect('appl1.db')
+    cursor = conn.cursor()
+
+    # Query to reorder the table by date in ascending order and update the original table
+    query = '''
+        CREATE TABLE temp_table AS
+        SELECT * FROM appl1
+        ORDER BY DATE(unix_time_0900) ASC;
+        
+        DROP TABLE appl1;
+        
+        ALTER TABLE temp_table RENAME TO appl1;
+    '''
+
+    # Execute the query
+    cursor.executescript(query)
+    conn.commit()
+
+    # Fetch the results if needed
+    cursor.execute("SELECT * FROM ALLONE")
+    results = cursor.fetchall()
+
+    # Process the results as needed
+    for row in results:
+        print(row)
+
+    # Close the connection
+    conn.close()
+
+def date_adder():
+    #16 to 141
+    for i in range(16, 142):
+        conn = sqlite3.connect("appl1.db")
+        cursor = conn.cursor()
+        prev_query_string = f"SELECT unix_time_0905 FROM appl1 WHERE id = {i}"
+        cursor.execute(prev_query_string)
+        result = cursor.fetchone()
+        result = int(int(str(result[0]))/1000)
+        dt_object = datetime.utcfromtimestamp(result)
+        date_string = dt_object.strftime("%m-%d-%Y")
+        update_query = f"UPDATE appl1 SET date = {the_date}, prev_close = {prev_close_string} WHERE id = {id}"
+
+        cursor.execute(update_query)
+        conn.commit()
+        conn.close()
+
+    exit()
+
+
     #get date from args
     the_date = datetime(year, month, day)
     the_date = the_date.strftime("%m/%d/%Y")

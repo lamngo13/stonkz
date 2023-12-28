@@ -19,7 +19,8 @@ import json
 
 #TODO FIND OUT HOW TO LOAD TXT INTO DB WITH DATES
 
-mass_txt_db()
+#mass_txt_db()
+date_adder()
 #hard_delete(16)
 
 
