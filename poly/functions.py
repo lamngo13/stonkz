@@ -138,7 +138,7 @@ def mass_txt_db():
     start_date = datetime(2023, 1, 3)
     #jan 1 and 2 were weekends
     end_date = datetime(2023, 11, 30)
-    end_date = datetime(2023, 1, 4)
+    end_date = datetime(2023, 1, 30) #make this like 10 j for jan for testing
 
     # Define the step (1 day in this case)
     step = timedelta(days=1)
@@ -150,6 +150,7 @@ def mass_txt_db():
         file_path = f"{date_string}.txt"
 
         if os.path.exists(file_path) and os.path.getsize(file_path) > 100:
+            print("trying for " + str(date_string))
             into_db(date_string)
         else:
             print(f"The file {file_path} does not exist or is empty.")
@@ -181,6 +182,12 @@ def into_db(file_name):
         iterator_values.append(current_time.strftime("%H%M"))
         current_time += interval
 
+    #parsed_date = datetime.strptime(file_name, "%Y-%m-%d")
+    #formatted_date = parsed_date.strftime("%m/%d/%Y")
+    #formatted_date = file_name.strftime("%m/%d/%Y")
+    #columns_to_insert.append("date")
+    #values.append(str(formatted_date))
+
     # append to using columns
     for value in iterator_values:
         columns_to_insert.append("open_"+str(value))
@@ -208,15 +215,17 @@ def into_db(file_name):
         values.pop()
 
     #hardcode date into here
+        '''
     parsed_date = datetime.strptime(file_name, "%Y-%m-%d")
     formatted_date = parsed_date.strftime("%m/%d/%Y")
     columns_to_insert.append("date")
     values.append(str(formatted_date))
+    '''
     #print(len(columns_to_insert))
     #print(len(values))
     #print(columns_to_insert)
-    print(values)
-    exit()
+    #print(values)
+    #exit()
 
     insert_query = f"INSERT INTO appl1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
     #print(insert_query)
