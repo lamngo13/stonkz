@@ -279,7 +279,7 @@ def prev(id: int, year: int, month: int, day: int):
     conn.close()
 
 def orderer():
-    print("sorting by unix_time_0900")
+    print("sorting by unix_time_0905")
     conn = sqlite3.connect('appl1.db')
     cursor = conn.cursor()
 
@@ -287,7 +287,7 @@ def orderer():
     query = '''
         CREATE TABLE temp_table AS
         SELECT * FROM appl1
-        ORDER BY DATE(date) ASC;
+        ORDER BY unix_time_0905 ASC;
         
         DROP TABLE appl1;
         
@@ -298,6 +298,24 @@ def orderer():
     cursor.executescript(query)
     conn.commit()
     conn.close()
+
+def better_orderer():
+    # Connect to the database
+    conn = sqlite3.connect("appl1.db")  # Replace with your actual database file name
+    cursor = conn.cursor()
+
+    # Execute the query to select all columns from your_table and order by date
+    query = """
+    SELECT *
+    FROM appl1
+    ORDER BY
+      SUBSTR(date, 7, 4) || SUBSTR(date, 1, 2) || SUBSTR(date, 4, 2);
+    """
+
+    cursor.execute(query)
+    conn.commit()
+    conn.close()
+
 
 def date_adder():
     #16 to 141
@@ -312,35 +330,11 @@ def date_adder():
         date_string = dt_object.strftime("%m/%d/%Y")
         date_string = f"'{date_string}'"
         update_query = f"UPDATE appl1 SET date = {date_string} WHERE id = {i}"
-        print(update_query)
-
         cursor.execute(update_query)
+        prev_close_query = f"UPDATE appl1 SET prev_close = 101 WHERE id = {i}"
+        cursor.execute(prev_close_query)
         conn.commit()
         conn.close()
-
-    exit()
-
-
-    #get date from args
-    the_date = datetime(year, month, day)
-    the_date = the_date.strftime("%m/%d/%Y")
-    the_date = f"'{the_date}'"
-
-    #get previous id and also current id
-    prev_id = id - 1
-    id = f"'{id}'"
-    
-    conn = sqlite3.connect("appl1.db")
-    cursor = conn.cursor()
-    prev_query_string = f"SELECT close_2205 FROM appl1 WHERE id = {prev_id}"
-    cursor.execute(prev_query_string)
-    result = cursor.fetchone()
-    prev_close_string = str(result[0])
-    prev_close_string = f"'{prev_close_string}'"
-    insert_query = f"UPDATE appl1 SET date = {the_date}, prev_close = {prev_close_string} WHERE id = {id}"
-    cursor.execute(insert_query)
-    conn.commit()
-    conn.close()
 
 
 def parsing(date:str):

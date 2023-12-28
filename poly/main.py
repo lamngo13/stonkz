@@ -20,10 +20,13 @@ import json
 #TODO FIND OUT HOW TO LOAD TXT INTO DB WITH DATES
 
 #mass_txt_db()
-date_adder()
+#date_adder()
+orderer()
 #hard_delete(16)
 
-
+#TODO use these after u add new stuff to ur db
+#date_adder()
+#orderer()
 
 
 
