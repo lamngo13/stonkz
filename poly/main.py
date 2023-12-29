@@ -5,5 +5,11 @@ from wdate import *
 import json
 
 
-autofiller()
+#autofiller()
+#this gets data from polygon api
+
+investigation()
+#this fills into the db based on txt files
+
 #fixer_of_bad()
+#this changes prev close n stuff
