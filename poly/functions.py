@@ -446,21 +446,9 @@ def investigation():
     while current_date <= end_date:
         date_string = current_date.strftime("%Y-%m-%d")
         file_path = f"{date_string}.txt"
-        new_db(date_string)
 
         if os.path.exists(file_path) and os.path.getsize(file_path) > 100:
-            with open(file_path, 'r') as file:
-                fc = json.load(file)
-                res = fc['results']
-                print(str(len(res)))
-                for row in res:
-                    unix_holder = int(row['t'])
-                    unix_holder = unix_holder / 1000
-                    dt_object = datetime.utcfromtimestamp(unix_holder)
-                    hours_mins = dt_object.strftime('%H:%M')
-                    print(hours_mins)
-                    #new_db(unix_holder, hours_mins)
-
+            tru_new_db(file_path)
         else:
             print(f"The file {file_path} does not exist or is empty.")
 
@@ -468,8 +456,6 @@ def investigation():
         current_date += step
 
 def tru_new_db(date_string_in):
-    #im getting the date string
-    file_path = f"{date_string_in}.txt"
     conn = sqlite3.connect("manzana1.db")
     cursor = conn.cursor()
     start_time = datetime.strptime("09:00", "%H:%M")
@@ -477,8 +463,34 @@ def tru_new_db(date_string_in):
     interval = timedelta(minutes=5)
     current_time = start_time
     iterator_values = []
+    columns_to_insert = []
+    values = []
+    present_list = []
+
+    #get data from text file
+    file_path = f"{date_string_in}.txt"
+    with open(file_path, 'r') as file:
+        fc = json.load(file)
+    res = fc['results']
+
+    #see which timestamps (in hours and minutes) are present
+    #loop through the res to find that
+    #we assume the file exists at this point, and has at least 100 entries
+    for row in res:
+        #get the time in hrs mins
+        unix_holder = int(row['t'])
+        unix_holder = unix_holder / 1000
+        dt_object = datetime.utcfromtimestamp(unix_holder)
+        hours_mins = dt_object.strftime('%H:%M')
+        present_list.append(hours_mins)
+
+    print(present_list)
+
     while current_time <= end_time:
-        print(current_time)
+        useable_current_time = current_time.strftime("%H%M")
+        time_w_colon = current_time.strftime("%H:%M")
+        #get each row and check it against the time.
+        
         current_time += interval
     #first, establish that the while loop works
     #COUNTING STRICTLY FROM (9:00 to 2055) INCLUSIVE
