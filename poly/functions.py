@@ -434,8 +434,9 @@ def investigation():
     #TODO TODO TODO 
     #1/10 is high
     #4/14
-    start_date = datetime(2023, 4, 14)
-    end_date = datetime(2023, 4, 14) #make this like 10 j for jan for testing
+    #start at jan 3rd!!!!
+    start_date = datetime(2023, 1, 3)
+    end_date = datetime(2023, 1, 5) #inclusive i think 
 
     # Define the step (1 day in this case)
     step = timedelta(days=1)
@@ -445,6 +446,7 @@ def investigation():
     while current_date <= end_date:
         date_string = current_date.strftime("%Y-%m-%d")
         file_path = f"{date_string}.txt"
+        new_db(date_string)
 
         if os.path.exists(file_path) and os.path.getsize(file_path) > 100:
             with open(file_path, 'r') as file:
@@ -465,30 +467,112 @@ def investigation():
         #while condition, end while loop after
         current_date += step
 
-def new_db(unix_holder, hours_mins):
-    print(unix_holder)
-    print(str(type(unix_holder)))
-    print(hours_mins)
-    print(str(type(hours_mins)))
+def tru_new_db(date_string_in):
+    #im getting the date string
+    file_path = f"{date_string_in}.txt"
+    conn = sqlite3.connect("manzana1.db")
+    cursor = conn.cursor()
+    start_time = datetime.strptime("09:00", "%H:%M")
+    end_time = datetime.strptime("20:55", "%H:%M")
+    interval = timedelta(minutes=5)
+    current_time = start_time
+    iterator_values = []
+    while current_time <= end_time:
+        print(current_time)
+        current_time += interval
+    #first, establish that the while loop works
+    #COUNTING STRICTLY FROM (9:00 to 2055) INCLUSIVE
+    #I want to add these values into manzana1 iff they exist
+    #so only add to columns of rows which exist!
     
-def create_new_db():
-    print("ASDF")
-
-
-def create_table(date_string):
-    if input_count is None:
-        #init to 170, else read the file
-        count = 158
-        #this gets about like 11:40ish at night, the full 170 goes into the next day 
-    else:
-        #check for the true count of the elements only if we have an argument
-        file_path = 'a.txt'
-        file_path = f"{date_string}.txt"
+def DONTUSEFORREFERENCEinto_db(file_name):
+    file_path = f'{file_name}.txt'
         # Open the file and read its contents
-        with open(file_path, 'r') as file:
-            fc = json.load(file)
+    with open(file_path, 'r') as file:
+        fc = json.load(file)
 
-        count = fc['resultsCount']
+    res = fc['results']
+    conn = sqlite3.connect("appl1.db")
+    cursor = conn.cursor()
+
+    columns_to_insert = []
+    values = []
+
+    start_time = datetime.strptime("09:00", "%H:%M")
+    end_time = datetime.strptime("22:05", "%H:%M")
+    interval = timedelta(minutes=5)
+    current_time = start_time
+    iterator_values = []
+    while current_time <= end_time:
+        iterator_values.append(current_time.strftime("%H%M"))
+        current_time += interval
+
+    #parsed_date = datetime.strptime(file_name, "%Y-%m-%d")
+    #formatted_date = parsed_date.strftime("%m/%d/%Y")
+    #formatted_date = file_name.strftime("%m/%d/%Y")
+    #columns_to_insert.append("date")
+    #values.append(str(formatted_date))
+
+    # append to using columns
+    for value in iterator_values:
+        columns_to_insert.append("open_"+str(value))
+        columns_to_insert.append("close_"+str(value))
+        columns_to_insert.append("high_"+str(value))
+        columns_to_insert.append("low_"+str(value))
+        columns_to_insert.append("volume_"+str(value))
+        columns_to_insert.append("N_"+str(value))
+        columns_to_insert.append("unix_time_"+str(value))
+
+    for row in res:
+        values.append(row['o'])
+        values.append(row['c'])
+        values.append(row['h'])
+        values.append(row['l'])
+        values.append(row['v'])
+        values.append(row['n'])
+        values.append(row['t'])
+
+    
+    print("lencol: " + str(len(columns_to_insert)))
+    print("lenvals: " + str(len(values)))
+
+    values = [str(value) for value in values]  # Convert values to strings
+    #cut down the values in our dataset
+    while (len(columns_to_insert) < len(values)):
+        values.pop()
+
+    print("post pop:")
+    print("lencol: " + str(len(columns_to_insert)))
+    print("lenvals: " + str(len(values)))
+
+    #hardcode date into here
+    '''
+    parsed_date = datetime.strptime(file_name, "%Y-%m-%d")
+    formatted_date = parsed_date.strftime("%m/%d/%Y")
+    columns_to_insert.append("date")
+    values.append(str(formatted_date))
+    '''
+    #print(len(columns_to_insert))
+    #print(len(values))
+    #print(columns_to_insert)
+    #print(values)
+    #exit()
+
+    insert_query = f"INSERT INTO appl1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
+    #print(insert_query)
+    #exit()
+    cursor.execute(insert_query)
+    conn.commit()
+    conn.close()
+
+
+def new_create_table():
+    count = 144
+    #file_path = 'a.txt'
+    #file_path = f"{date_string}.txt"
+    #with open(file_path, 'r') as file:
+        #fc = json.load(file)
+
 
     #print("COUNT: " + str(count))
 
@@ -500,7 +584,7 @@ def create_table(date_string):
     columns = ', '.join([f'open_{i} TEXT, close_{i} TEXT, high_{i} TEXT, low_{i} TEXT, volume_{i} TEXT, N_{i} TEXT, unix_time_{i} TEXT' for i in time_values])
     #create the table based on the number of columns
     create_table_query = f'''
-        CREATE TABLE IF NOT EXISTS appl1 (
+        CREATE TABLE IF NOT EXISTS manzana1 (
             id INTEGER PRIMARY KEY,
             date TEXT,
             prev_close TEXT,
@@ -509,7 +593,7 @@ def create_table(date_string):
     '''
     print(create_table_query)
     #ok now actually create the database
-    conn = sqlite3.connect('appl1.db')
+    conn = sqlite3.connect('manzana1.db')
     cursor = conn.cursor()
     cursor.execute(create_table_query)
     conn.commit()
