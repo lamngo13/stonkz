@@ -8,8 +8,8 @@ import json
 #autofiller()
 #this gets data from polygon api
 
-investigation()
+#investigation()
 #this fills into the db based on txt files
 
-#fixer_of_bad()
+fixer_of_bad()
 #this changes prev close n stuff

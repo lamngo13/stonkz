@@ -542,10 +542,34 @@ def tru_new_db(date_string_in):
     conn.close()
 
 def fixer_of_bad():
+    
     conn = sqlite3.connect("manzana1.db")
     cursor = conn.cursor()
+    number_query = "SELECT COUNT(*) FROM manzana1"
+    cursor.execute(number_query)
+    num_rows = int(cursor.fetchone()[0])
+
+    #fix prev close placeholder of BAD
+    prev_close_holder = []
+    for i in range(2,num_rows+1):
+        prev_close_query = f"SELECT close_2055 FROM manzana1 WHERE id = {i-1}"
+        cursor.execute(prev_close_query)
+        prev = str(cursor.fetchone()[0])
+        prev_close_holder.append(prev)
+
+        prev_close_updater_query = f'''
+        UPDATE manzana1 SET prev_close = {prev} WHERE id = {i}
+        '''
+        cursor.execute(prev_close_updater_query)
+       
+    conn.commit()
+    conn.close()
+    exit()
+
+    
+    
     update_query = f'''
-    UPDATE manzana1 SET prev_close = 130.1 WHERE id = 1"
+    UPDATE manzana1 SET prev_close = 130.1 WHERE id = 1
     '''
     cursor.execute(update_query)
     conn.commit()
