@@ -11,5 +11,9 @@ import json
 #investigation()
 #this fills into the db based on txt files
 
-fixer_of_bad()
+#fixer_of_bad()
 #this changes prev close n stuff
+
+
+#workspace
+temp_fixer_of_bad()

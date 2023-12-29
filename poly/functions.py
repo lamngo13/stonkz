@@ -5,6 +5,7 @@ import yfinance as yf
 from datetime import datetime, timedelta, date
 import time
 import os
+import pandas as pd
 
 # Replace '20230105' with the desired date in the format YYYYMMDD
 #target_date = '2023-12-01'
@@ -571,7 +572,82 @@ def fixer_of_bad():
     conn.commit()
     conn.close()
  
+def temp_fixer_of_bad():
+    
+    conn = sqlite3.connect("manzana1.db")
+    cursor = conn.cursor()
 
+    total_db_query = ("SELECT * FROM manzana1")
+    df = pd.read_sql_query(total_db_query, conn)
+    #print(df)
+    #all vals are strings from the db
+
+    #next is the tricky part
+    #now I need to get each column into a dataframe
+    #and use some pandas or numpy function to average out the values that are "BAD"
+    #the tricky part is how do I find what I want to put there
+        
+    #first step is to hardcode first column
+    print("ASDF")
+    #open_
+    #close_
+    #high_
+    #low_
+    #volume_
+    #N_
+    #unix_time_
+    repeated_cols_list = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_']
+    holder_col = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_']
+    start_time = datetime.strptime("09:00", "%H:%M")
+    end_time = datetime.strptime("20:55", "%H:%M")
+    current_time = start_time
+    interval = timedelta(minutes=5)
+    while current_time <= end_time:
+        useable_current_time = current_time.strftime("%H%M")
+        time_w_colon = current_time.strftime("%H:%M")
+        iterator = 0
+
+        for val in repeated_cols_list:
+            holder_col[iterator] = (repeated_cols_list[iterator]+useable_current_time)
+
+            print("assessing: " + useable_current_time)
+            #check backwards
+            keep_going_back = True
+            closest_prev = "noval"
+            past_time = current_time
+            i = 0
+            while(keep_going_back):
+                past_time = past_time - interval
+                formatted_past_time = past_time.strftime("%H%M")
+                print(formatted_past_time)
+
+
+                if (i >= 10):
+                    keep_going_back = False
+                    closest_prev = "impossible"
+                i = i + 1
+
+
+
+
+
+
+
+            #iteration step
+            #this is p big don't touch!!
+            iterator = iterator + 1
+        
+
+        #iteration step
+        print(closest_prev)
+        exit()
+        current_time += interval
+       
+
+
+
+    conn.commit()
+    conn.close()
 
 def new_create_table():
     count = 144
