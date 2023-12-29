@@ -488,7 +488,9 @@ def tru_new_db(date_string_in):
     columns_to_insert.append("date")
     values.append(in_date)
     columns_to_insert.append("prev_close")
-    values.append("BAD")
+    testz = "BAD"
+    testz = f"{testz}"
+    values.append(testz)
 
     #see which timestamps (in hours and minutes) are present
     #loop through the res to find that
@@ -553,12 +555,20 @@ def tru_new_db(date_string_in):
     #print(values)
     #exit()
     #TESTING< DELETE THIS
-    columns_to_insert = ['col1', 'col2']
-    values = ['alpha', 'beta']
+    #columns_to_insert = ['col1', 'col2']
+    #values = ['alpha', 'beta']
+    quoted_values = [f"'{value}'" if isinstance(value, str) else str(value) for value in values]
+    store_values = values
+    values = quoted_values
+
+    # Construct the INSERT query
+    #insert_query = f"INSERT INTO manzana1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(quoted_values)})"
+    #print(insert_query)
+    #exit()
 
     insert_query = f"INSERT INTO manzana1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
-    print(insert_query)
-    exit()
+    #print(insert_query)
+    #exit()
     cursor.execute(insert_query)
     conn.commit()
     conn.close()
