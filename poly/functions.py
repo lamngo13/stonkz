@@ -432,11 +432,14 @@ def hard_delete(zid):
 
 def investigation():
     #TODO TODO TODO 
+    #this loops through your text files that do exist, and passes them into 
+    #another function, tru_new_db()
     #1/10 is high
     #4/14
     #start at jan 3rd!!!!
     start_date = datetime(2023, 1, 3)
     end_date = datetime(2023, 1, 5) #inclusive i think 
+    
 
     # Define the step (1 day in this case)
     step = timedelta(days=1)
@@ -458,14 +461,12 @@ def investigation():
 def tru_new_db(date_string_in):
     conn = sqlite3.connect("manzana1.db")
     cursor = conn.cursor()
-    start_time = datetime.strptime("09:00", "%H:%M")
-    end_time = datetime.strptime("20:55", "%H:%M")
-    interval = timedelta(minutes=5)
-    current_time = start_time
-    iterator_values = []
+
+    
     columns_to_insert = []
     values = []
     present_list = []
+    doerdict = {}
 
 
     #get data from text file
@@ -473,6 +474,8 @@ def tru_new_db(date_string_in):
     with open(file_path, 'r') as file:
         fc = json.load(file)
     res = fc['results']
+    #btw we are assuming that 
+    #for every row, there ARE in fact 8 values
 
     #grab a sample val to format the date
     temp_date = res[0]['t']
@@ -480,11 +483,12 @@ def tru_new_db(date_string_in):
     dt_object = datetime.utcfromtimestamp(unix_holder)
     in_date = dt_object.strftime('%m/%d/%Y')
     in_date = f"{in_date}"
-    print(in_date)
-    exit()
-    
 
     #insert first few values hardcode
+    columns_to_insert.append("date")
+    values.append(in_date)
+    columns_to_insert.append("prev_close")
+    values.append("BAD")
 
     #see which timestamps (in hours and minutes) are present
     #loop through the res to find that
@@ -496,29 +500,66 @@ def tru_new_db(date_string_in):
         dt_object = datetime.utcfromtimestamp(unix_holder)
         hours_mins = dt_object.strftime('%H%M')
         present_list.append(hours_mins)
+        #TODO ALSO APPEND TO A DICT
+        doerdict[hours_mins] = row
+ 
+    #THE PRESENT LIST 
+    #is used to show what timestamps DO exist
 
-    #print(present_list)
-    #exit()
-
+    #create set of columns to insert, and all of their values
+    start_time = datetime.strptime("09:00", "%H:%M")
+    end_time = datetime.strptime("20:55", "%H:%M")
+    current_time = start_time
+    interval = timedelta(minutes=5)
     while current_time <= end_time:
         useable_current_time = current_time.strftime("%H%M")
         time_w_colon = current_time.strftime("%H:%M")
+        #append vals to columns_to_insert IN ANY CASE
+        #THE VALS ARE VARIABLE
+        columns_to_insert.append("open_"+str(useable_current_time))
+        columns_to_insert.append("close_"+str(useable_current_time))
+        columns_to_insert.append("high_"+str(useable_current_time))
+        columns_to_insert.append("low_"+str(useable_current_time))
+        columns_to_insert.append("volume_"+str(useable_current_time))
+        columns_to_insert.append("N_"+str(useable_current_time))
+        columns_to_insert.append("unix_time_"+str(useable_current_time))
+
+        
         if useable_current_time in present_list:
-            print("found in: " + useable_current_time)
             #add vals to col list
+            temp_row = doerdict[useable_current_time]
+            values.append(temp_row['o'])
+            values.append(temp_row['c'])
+            values.append(temp_row['h'])
+            values.append(temp_row['l'])
+            values.append(temp_row['v'])
+            values.append(temp_row['n'])
+            values.append(temp_row['t'])
         else:
             print("NOT found in: " + useable_current_time)
             #if this is the case, put in dummy values
+            for i in range(1,8):
+                values.append("BAD")
 
 
 
-        #get each row and check it against the time.
-        
+        #iteration step
         current_time += interval
-    #first, establish that the while loop works
-    #COUNTING STRICTLY FROM (9:00 to 2055) INCLUSIVE
-    #I want to add these values into manzana1 iff they exist
-    #so only add to columns of rows which exist!
+
+    #checking
+    #print("checking")
+    #print(str(len(columns_to_insert)))
+    #print(str(len(values)))
+    #print(values)
+    #exit()
+
+    insert_query = f"INSERT INTO manzana1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
+    #print(insert_query)
+    #exit()
+    cursor.execute(insert_query)
+    conn.commit()
+    conn.close()
+
     
 def DONTUSEFORREFERENCEinto_db(file_name):
     file_path = f'{file_name}.txt'
