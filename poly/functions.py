@@ -437,8 +437,9 @@ def investigation():
     #1/10 is high
     #4/14
     #start at jan 3rd!!!!
-    start_date = datetime(2023, 1, 3)
-    end_date = datetime(2023, 1, 5) #inclusive i think 
+    start_date = datetime(2023, 1, 5)
+    end_date = datetime(2023, 11, 30) #inclusive i think 
+    #THESE ARE INCLUSIVE OF BOTH
     
 
     # Define the step (1 day in this case)
@@ -459,6 +460,7 @@ def investigation():
         current_date += step
 
 def tru_new_db(date_string_in):
+    print("considering date: " + str(date_string_in))
     conn = sqlite3.connect("manzana1.db")
     cursor = conn.cursor()
     
@@ -488,9 +490,7 @@ def tru_new_db(date_string_in):
     columns_to_insert.append("date")
     values.append(in_date)
     columns_to_insert.append("prev_close")
-    testz = "BAD"
-    testz = f"{testz}"
-    values.append(testz)
+    values.append("BAD")
 
     #see which timestamps (in hours and minutes) are present
     #loop through the res to find that
@@ -561,10 +561,6 @@ def tru_new_db(date_string_in):
     store_values = values
     values = quoted_values
 
-    # Construct the INSERT query
-    #insert_query = f"INSERT INTO manzana1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(quoted_values)})"
-    #print(insert_query)
-    #exit()
 
     insert_query = f"INSERT INTO manzana1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
     #print(insert_query)
