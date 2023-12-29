@@ -587,27 +587,21 @@ def temp_fixer_of_bad():
     #and use some pandas or numpy function to average out the values that are "BAD"
     #the tricky part is how do I find what I want to put there
         
-    #first step is to hardcode first column
     print("ASDF")
-    #open_
-    #close_
-    #high_
-    #low_
-    #volume_
-    #N_
-    #unix_time_
-    repeated_cols_list = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_']
-    holder_col = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_']
+    #repeated_cols_list = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_']
+    holder_col = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_', 'unix_time_']
+    values = ['1', '2', '3', '4', '5', '6', '7']
+    values_dict = {"open": "holder", "close": "holder", "high": "holder", "low": "holder", "volume": "holder", "N": "holder", "unix": "holder"}
     start_time = datetime.strptime("09:00", "%H:%M")
     #start_time = datetime.strptime("09:10", "%H:%M")
     #this for testing
     end_time = datetime.strptime("20:55", "%H:%M")
+
     current_time = start_time
     interval = timedelta(minutes=5)
     while current_time <= end_time:
         useable_current_time = current_time.strftime("%H%M")
         time_w_colon = current_time.strftime("%H:%M")
-        iterator = 0
 
         #find the nearest valid previous entry
         #or let it be known that there is none
@@ -658,50 +652,28 @@ def temp_fixer_of_bad():
                     closest_next = "impossible"
                 i = i + 1
         #END SHWILE HERE
-        print("ayyo")
-        print("closest prev: " + closest_prev)
-        print("closest next: " + closest_next)
-        exit()
+        #print("closest prev: " + closest_prev)
+        #print("closest next: " + closest_next)
+        #now we have the next available vals
+                
+        #name the columns after the curr time
+        for i in range(0,7):
+            holder_col[i] = holder_col[i]+useable_current_time
+        
+        #hardcode unix time as the right unix time bc that is always gonna be known
 
-        #now, find the closest next value
-
-        #now actually do the vals based on closest_prev and closest_next
-        #TODO remember that unix time too
-        for val in repeated_cols_list:
-            holder_col[iterator] = (repeated_cols_list[iterator]+useable_current_time)
-
-            print("assessing: " + useable_current_time)
-            #check backwards
-            keep_going_back = True
-            closest_prev = "noval"
-            past_time = current_time
-            i = 0
-            while(keep_going_back):
-                past_time = past_time - interval
-                formatted_past_time = past_time.strftime("%H%M")
-                print(formatted_past_time)
-
-
-                if (i >= 10):
-                    keep_going_back = False
-                    closest_prev = "impossible"
-                i = i + 1
-
-
-
-
-
-
-
-            #iteration step
-            #this is p big don't touch!!
-            iterator = iterator + 1
-            #END FOR LOOP
+        if (closest_next == "impossible" and closest_prev == "impossible"):
+            print("NO FREAKING WAY THERE IS NO GOSH DARN DATA!!!!!!!!!!!!!!!!!!")
+            print(str(useable_current_time))
+            return useable_current_time
+        
+        #case of prev exists but not 
         
 
+
+
+
         #iteration step
-        print(closest_prev)
-        exit()
         current_time += interval
        
 
