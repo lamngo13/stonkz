@@ -461,13 +461,11 @@ def investigation():
 def tru_new_db(date_string_in):
     conn = sqlite3.connect("manzana1.db")
     cursor = conn.cursor()
-
     
     columns_to_insert = []
     values = []
     present_list = []
     doerdict = {}
-
 
     #get data from text file
     file_path = f"{date_string_in}.txt"
@@ -476,6 +474,8 @@ def tru_new_db(date_string_in):
     res = fc['results']
     #btw we are assuming that 
     #for every row, there ARE in fact 8 values
+    #if that is not the case,
+    #then we are not SQL, but rather SOL
 
     #grab a sample val to format the date
     temp_date = res[0]['t']
@@ -528,13 +528,13 @@ def tru_new_db(date_string_in):
         if useable_current_time in present_list:
             #add vals to col list
             temp_row = doerdict[useable_current_time]
-            values.append(temp_row['o'])
-            values.append(temp_row['c'])
-            values.append(temp_row['h'])
-            values.append(temp_row['l'])
-            values.append(temp_row['v'])
-            values.append(temp_row['n'])
-            values.append(temp_row['t'])
+            values.append(str(temp_row['o']))
+            values.append(str(temp_row['c']))
+            values.append(str(temp_row['h']))
+            values.append(str(temp_row['l']))
+            values.append(str(temp_row['v']))
+            values.append(str(temp_row['n']))
+            values.append(str(temp_row['t']))
         else:
             print("NOT found in: " + useable_current_time)
             #if this is the case, put in dummy values
@@ -552,10 +552,13 @@ def tru_new_db(date_string_in):
     #print(str(len(values)))
     #print(values)
     #exit()
+    #TESTING< DELETE THIS
+    columns_to_insert = ['col1', 'col2']
+    values = ['alpha', 'beta']
 
     insert_query = f"INSERT INTO manzana1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
-    #print(insert_query)
-    #exit()
+    print(insert_query)
+    exit()
     cursor.execute(insert_query)
     conn.commit()
     conn.close()
