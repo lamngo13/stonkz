@@ -661,13 +661,20 @@ def temp_fixer_of_bad():
             holder_col[i] = holder_col[i]+useable_current_time
         
         #hardcode unix time as the right unix time bc that is always gonna be known
+        temp_unix = "todo this, u need to use a sample unix time from"
+        #prev or next
+        #and there's prob a function to unixify it
+        #or just hardcode the difference
 
         if (closest_next == "impossible" and closest_prev == "impossible"):
             print("NO FREAKING WAY THERE IS NO GOSH DARN DATA!!!!!!!!!!!!!!!!!!")
             print(str(useable_current_time))
             return useable_current_time
         
-        #case of prev exists but not 
+        #case of prev exists but not the next
+        #if (closest_prev != "impossible" and closest_next == "impossible"):
+            #fill out vals with vals of closest_prev
+
         
 
 
