@@ -599,6 +599,8 @@ def temp_fixer_of_bad():
     repeated_cols_list = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_']
     holder_col = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_']
     start_time = datetime.strptime("09:00", "%H:%M")
+    #start_time = datetime.strptime("09:10", "%H:%M")
+    #this for testing
     end_time = datetime.strptime("20:55", "%H:%M")
     current_time = start_time
     interval = timedelta(minutes=5)
@@ -622,6 +624,8 @@ def temp_fixer_of_bad():
                     maybe = df[holder_name]
                     #if we here, then ladies n gents, we got em
                     closest_prev = formatted_past_time
+                    keep_going_back = False
+                    #get outta the shwhile loop
                 except:
                     dontuse = 420
 
@@ -631,9 +635,35 @@ def temp_fixer_of_bad():
                 i = i + 1
         #END SHWILE HERE
         
-        print("here")
-        print(closest_prev)
+        closest_next = "notyet"
+        keep_going_back = True
+        past_time = current_time
+        i = 0
+        while(keep_going_back):
+                past_time = past_time + interval
+                formatted_next_time = past_time.strftime("%H%M")
+                #check to see if val for prev time exists
+                try:
+                    holder_name = "open_"+formatted_next_time
+                    maybe = df[holder_name]
+                    #if we here, then ladies n gents, we got em
+                    closest_next = formatted_next_time
+                    keep_going_back = False
+                    #get outta the shwhile loop
+                except:
+                    dontuse = 420
+
+                if (i >= 30):
+                    keep_going_back = False
+                    closest_next = "impossible"
+                i = i + 1
+        #END SHWILE HERE
+        print("ayyo")
+        print("closest prev: " + closest_prev)
+        print("closest next: " + closest_next)
         exit()
+
+        #now, find the closest next value
 
         #now actually do the vals based on closest_prev and closest_next
         #TODO remember that unix time too
