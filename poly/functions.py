@@ -347,8 +347,9 @@ def autofiller():
     api_key = "TRxer9Mhmo64ERvyE5mRbrQI69Atdo7v"
     symbol = 'AAPL'
 
-    start_date = datetime(2023, 7, 29)
-    end_date = datetime(2023, 11, 30)
+    start_date = datetime(2023, 12, 1)
+    end_date = datetime(2023, 12, 28)
+    #I think this is inclusive
 
     current_date = start_date
 
@@ -540,7 +541,15 @@ def tru_new_db(date_string_in):
     conn.commit()
     conn.close()
 
-    
+def fixer_of_bad():
+    conn = sqlite3.connect("manzana1.db")
+    cursor = conn.cursor()
+    update_query = f'''
+    UPDATE manzana1 SET prev_close = 130.1 WHERE id = 1"
+    '''
+    cursor.execute(update_query)
+    conn.commit()
+    conn.close()
 
 
 def new_create_table():
