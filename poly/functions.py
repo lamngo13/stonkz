@@ -607,6 +607,36 @@ def temp_fixer_of_bad():
         time_w_colon = current_time.strftime("%H:%M")
         iterator = 0
 
+        #find the nearest valid previous entry
+        #or let it be known that there is none
+        closest_prev = "notyet"
+        keep_going_back = True
+        past_time = current_time
+        i = 0
+        while(keep_going_back):
+                past_time = past_time - interval
+                formatted_past_time = past_time.strftime("%H%M")
+                #check to see if val for prev time exists
+                try:
+                    holder_name = "open_"+formatted_past_time
+                    maybe = df[holder_name]
+                    #if we here, then ladies n gents, we got em
+                    closest_prev = formatted_past_time
+                except:
+                    dontuse = 420
+
+                if (i >= 30):
+                    keep_going_back = False
+                    closest_prev = "impossible"
+                i = i + 1
+        #END SHWILE HERE
+        
+        print("here")
+        print(closest_prev)
+        exit()
+
+        #now actually do the vals based on closest_prev and closest_next
+        #TODO remember that unix time too
         for val in repeated_cols_list:
             holder_col[iterator] = (repeated_cols_list[iterator]+useable_current_time)
 
@@ -636,6 +666,7 @@ def temp_fixer_of_bad():
             #iteration step
             #this is p big don't touch!!
             iterator = iterator + 1
+            #END FOR LOOP
         
 
         #iteration step
