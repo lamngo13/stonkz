@@ -22,9 +22,9 @@ import json
 #mass_txt_db()
 #date_adder()
 #orderer()
-#investigation()
+investigation()
 #new_create_table()
-tru_new_db("ADSF")
+#tru_new_db("ADSF")
 
 #hard_delete(16)
 

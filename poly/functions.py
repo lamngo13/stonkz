@@ -448,7 +448,7 @@ def investigation():
         file_path = f"{date_string}.txt"
 
         if os.path.exists(file_path) and os.path.getsize(file_path) > 100:
-            tru_new_db(file_path)
+            tru_new_db(date_string)
         else:
             print(f"The file {file_path} does not exist or is empty.")
 
@@ -467,11 +467,24 @@ def tru_new_db(date_string_in):
     values = []
     present_list = []
 
+
     #get data from text file
     file_path = f"{date_string_in}.txt"
     with open(file_path, 'r') as file:
         fc = json.load(file)
     res = fc['results']
+
+    #grab a sample val to format the date
+    temp_date = res[0]['t']
+    unix_holder = int(int(temp_date)/1000)
+    dt_object = datetime.utcfromtimestamp(unix_holder)
+    in_date = dt_object.strftime('%m/%d/%Y')
+    in_date = f"{in_date}"
+    print(in_date)
+    exit()
+    
+
+    #insert first few values hardcode
 
     #see which timestamps (in hours and minutes) are present
     #loop through the res to find that
@@ -481,14 +494,24 @@ def tru_new_db(date_string_in):
         unix_holder = int(row['t'])
         unix_holder = unix_holder / 1000
         dt_object = datetime.utcfromtimestamp(unix_holder)
-        hours_mins = dt_object.strftime('%H:%M')
+        hours_mins = dt_object.strftime('%H%M')
         present_list.append(hours_mins)
 
-    print(present_list)
+    #print(present_list)
+    #exit()
 
     while current_time <= end_time:
         useable_current_time = current_time.strftime("%H%M")
         time_w_colon = current_time.strftime("%H:%M")
+        if useable_current_time in present_list:
+            print("found in: " + useable_current_time)
+            #add vals to col list
+        else:
+            print("NOT found in: " + useable_current_time)
+            #if this is the case, put in dummy values
+
+
+
         #get each row and check it against the time.
         
         current_time += interval
