@@ -21,7 +21,9 @@ import json
 
 #mass_txt_db()
 #date_adder()
-orderer()
+#orderer()
+investigation()
+
 #hard_delete(16)
 
 #TODO use these after u add new stuff to ur db

@@ -136,12 +136,11 @@ def first_row():
 
 def mass_txt_db():
     #TODO TODO TODO 
-    #we need 07-03 to 11-30 inclusive
+    #missing 07/03/2023
+    #and missing 11/24/2023
     start_date = datetime(2023, 7, 3)
-    start_date = datetime(2023, 7, 2)
-    #jan 1 and 2 were weekends
+    start_date = datetime(2023, 11, 25)
     end_date = datetime(2023, 11, 30) #make this like 10 j for jan for testing
-    start_date = datetime(2023, 7, 3)
 
     # Define the step (1 day in this case)
     step = timedelta(days=1)
@@ -319,12 +318,14 @@ def better_orderer():
 
 def date_adder():
     #16 to 141
-    for i in range(16, 142):
+    for i in range(1, 246):
+        print(str(i))
         conn = sqlite3.connect("appl1.db")
         cursor = conn.cursor()
         prev_query_string = f"SELECT unix_time_0905 FROM appl1 WHERE id = {i}"
         cursor.execute(prev_query_string)
         result = cursor.fetchone()
+        print("result: " + str(result))
         result = int(int(str(result[0]))/1000)
         dt_object = datetime.utcfromtimestamp(result)
         date_string = dt_object.strftime("%m/%d/%Y")
@@ -337,29 +338,6 @@ def date_adder():
         conn.close()
 
 
-def parsing(date:str):
-    print("FROM THE RIVER TO THE SEA")
-    holder = get_intraday(date)
-    #this contains the actual api call
-
-    count = int(holder['resultsCount'])
-    conn = sqlite3.connect('river.db')
-    # Create a cursor
-    cursor = conn.cursor()
-
-    # Create a table
-    create_table_query = '''
-    CREATE TABLE IF NOT EXISTS river (
-        id INTEGER PRIMARY KEY,
-        date, TEXT
-        name, TEXT,
-        open TEXT,
-        high TEXT,
-        low TEXT,
-        close TEXT,
-        volume TEXT
-        )
-        '''
     
 #starting at jan 1 2023
 def autofiller():
@@ -449,3 +427,90 @@ def hard_delete(zid):
         # Close the cursor and connection
         cursor.close()
         conn.close()
+
+
+
+def investigation():
+    #TODO TODO TODO 
+    #1/10 is high
+    #4/14
+    start_date = datetime(2023, 4, 14)
+    end_date = datetime(2023, 4, 14) #make this like 10 j for jan for testing
+
+    # Define the step (1 day in this case)
+    step = timedelta(days=1)
+
+    # Loop through dates
+    current_date = start_date
+    while current_date <= end_date:
+        date_string = current_date.strftime("%Y-%m-%d")
+        file_path = f"{date_string}.txt"
+
+        if os.path.exists(file_path) and os.path.getsize(file_path) > 100:
+            with open(file_path, 'r') as file:
+                fc = json.load(file)
+                res = fc['results']
+                print(str(len(res)))
+                for row in res:
+                    unix_holder = int(row['t'])
+                    unix_holder = unix_holder / 1000
+                    dt_object = datetime.utcfromtimestamp(unix_holder)
+                    hours_mins = dt_object.strftime('%H:%M')
+                    print(hours_mins)
+                    #new_db(unix_holder, hours_mins)
+
+        else:
+            print(f"The file {file_path} does not exist or is empty.")
+
+        #while condition, end while loop after
+        current_date += step
+
+def new_db(unix_holder, hours_mins):
+    print(unix_holder)
+    print(str(type(unix_holder)))
+    print(hours_mins)
+    print(str(type(hours_mins)))
+    
+def create_new_db():
+    print("ASDF")
+
+
+def create_table(date_string):
+    if input_count is None:
+        #init to 170, else read the file
+        count = 158
+        #this gets about like 11:40ish at night, the full 170 goes into the next day 
+    else:
+        #check for the true count of the elements only if we have an argument
+        file_path = 'a.txt'
+        file_path = f"{date_string}.txt"
+        # Open the file and read its contents
+        with open(file_path, 'r') as file:
+            fc = json.load(file)
+
+        count = fc['resultsCount']
+
+    #print("COUNT: " + str(count))
+
+    #this line should remain unchanged, but the 'count' should change conditionally 
+    start_time = datetime.strptime("09:00", "%H:%M")
+    iterator_values = range(count)
+    time_values = [(start_time + timedelta(minutes=i * 5)).strftime("%H%M") for i in iterator_values]
+
+    columns = ', '.join([f'open_{i} TEXT, close_{i} TEXT, high_{i} TEXT, low_{i} TEXT, volume_{i} TEXT, N_{i} TEXT, unix_time_{i} TEXT' for i in time_values])
+    #create the table based on the number of columns
+    create_table_query = f'''
+        CREATE TABLE IF NOT EXISTS appl1 (
+            id INTEGER PRIMARY KEY,
+            date TEXT,
+            prev_close TEXT,
+            {columns}
+        )
+    '''
+    print(create_table_query)
+    #ok now actually create the database
+    conn = sqlite3.connect('appl1.db')
+    cursor = conn.cursor()
+    cursor.execute(create_table_query)
+    conn.commit()
+    conn.close()
