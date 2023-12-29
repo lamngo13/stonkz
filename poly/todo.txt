@@ -1,9 +1,19 @@
-the idea is I want to create a new feature (which will be the target prediction)
-that feature is just the opening price of the next day
+I'm working on getting more and better data
 
-GENERAL CONCEPT:
-I'm not sold on the idea that weights are enough
-Rather, I'm thinking of pentupling the feature set 
-such that the past 5 days' values are added in as features as well
+grand structure.
+autofiller()
+this gets new data
+investigation()
+this adds new data to my db
+fixer_of_bad()
+rn, this fixes previous close
+it ALSO needs to average out values that 
+are called BAD 
+I plan to do that by loading a column into a dataframe and 
+then using one of their averaging functions
 
-Also in general, I want to have more data for the dataset. 
+AFTER that
+I prob want to use a LTSM or maybe
+continue using the XGBoost ai stuff
+where I have written in aifunctions.py
+ALSO I might be able to average their predictions, who knows lol

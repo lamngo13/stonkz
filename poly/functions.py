@@ -550,30 +550,27 @@ def fixer_of_bad():
     num_rows = int(cursor.fetchone()[0])
 
     #fix prev close placeholder of BAD
-    prev_close_holder = []
     for i in range(2,num_rows+1):
         prev_close_query = f"SELECT close_2055 FROM manzana1 WHERE id = {i-1}"
         cursor.execute(prev_close_query)
         prev = str(cursor.fetchone()[0])
-        prev_close_holder.append(prev)
 
         prev_close_updater_query = f'''
         UPDATE manzana1 SET prev_close = {prev} WHERE id = {i}
         '''
         cursor.execute(prev_close_updater_query)
-       
-    conn.commit()
-    conn.close()
-    exit()
 
-    
-    
-    update_query = f'''
-    UPDATE manzana1 SET prev_close = 130.1 WHERE id = 1
-    '''
-    cursor.execute(update_query)
+    #next is the tricky part
+    #now I need to get each column into a dataframe
+    #and use some pandas or numpy function to average out the values that are "BAD"
+    #the tricky part is how do I find what I want to put there
+       
+
+
+
     conn.commit()
     conn.close()
+ 
 
 
 def new_create_table():
