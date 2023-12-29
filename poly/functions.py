@@ -402,29 +402,16 @@ def autofiller():
 
 def hard_delete(zid):
     id = str(zid)
-    # Connect to the SQLite database
-    conn = sqlite3.connect('appl1.db')  # Replace 'your_database.db' with your actual database file
-
-    # Create a cursor
+    conn = sqlite3.connect('manzana1.db')
     cursor = conn.cursor()
-
     try:
-        # Define the DELETE query
         delete_query = f"DELETE FROM appl1 WHERE id = ?"
-
-        # Execute the query with the provided ID
         cursor.execute(delete_query, (id,))
-
-        # Commit the changes to the database
         conn.commit()
-
         print(f"Row with ID {id} deleted successfully.")
-
     except sqlite3.Error as e:
         print(f"Error deleting row: {e}")
-
     finally:
-        # Close the cursor and connection
         cursor.close()
         conn.close()
 
@@ -434,11 +421,9 @@ def investigation():
     #TODO TODO TODO 
     #this loops through your text files that do exist, and passes them into 
     #another function, tru_new_db()
-    #1/10 is high
-    #4/14
     #start at jan 3rd!!!!
-    start_date = datetime(2023, 1, 5)
-    end_date = datetime(2023, 11, 30) #inclusive i think 
+    start_date = datetime(2023, 12, 1)
+    end_date = datetime(2023, 12, 28) #inclusive i think 
     #THESE ARE INCLUSIVE OF BOTH
     
 
@@ -543,125 +528,25 @@ def tru_new_db(date_string_in):
             for i in range(1,8):
                 values.append("BAD")
 
-
-
         #iteration step
         current_time += interval
 
-    #checking
-    #print("checking")
-    #print(str(len(columns_to_insert)))
-    #print(str(len(values)))
-    #print(values)
-    #exit()
-    #TESTING< DELETE THIS
-    #columns_to_insert = ['col1', 'col2']
-    #values = ['alpha', 'beta']
     quoted_values = [f"'{value}'" if isinstance(value, str) else str(value) for value in values]
     store_values = values
     values = quoted_values
 
-
     insert_query = f"INSERT INTO manzana1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
-    #print(insert_query)
-    #exit()
     cursor.execute(insert_query)
     conn.commit()
     conn.close()
 
     
-def DONTUSEFORREFERENCEinto_db(file_name):
-    file_path = f'{file_name}.txt'
-        # Open the file and read its contents
-    with open(file_path, 'r') as file:
-        fc = json.load(file)
-
-    res = fc['results']
-    conn = sqlite3.connect("appl1.db")
-    cursor = conn.cursor()
-
-    columns_to_insert = []
-    values = []
-
-    start_time = datetime.strptime("09:00", "%H:%M")
-    end_time = datetime.strptime("22:05", "%H:%M")
-    interval = timedelta(minutes=5)
-    current_time = start_time
-    iterator_values = []
-    while current_time <= end_time:
-        iterator_values.append(current_time.strftime("%H%M"))
-        current_time += interval
-
-    #parsed_date = datetime.strptime(file_name, "%Y-%m-%d")
-    #formatted_date = parsed_date.strftime("%m/%d/%Y")
-    #formatted_date = file_name.strftime("%m/%d/%Y")
-    #columns_to_insert.append("date")
-    #values.append(str(formatted_date))
-
-    # append to using columns
-    for value in iterator_values:
-        columns_to_insert.append("open_"+str(value))
-        columns_to_insert.append("close_"+str(value))
-        columns_to_insert.append("high_"+str(value))
-        columns_to_insert.append("low_"+str(value))
-        columns_to_insert.append("volume_"+str(value))
-        columns_to_insert.append("N_"+str(value))
-        columns_to_insert.append("unix_time_"+str(value))
-
-    for row in res:
-        values.append(row['o'])
-        values.append(row['c'])
-        values.append(row['h'])
-        values.append(row['l'])
-        values.append(row['v'])
-        values.append(row['n'])
-        values.append(row['t'])
-
-    
-    print("lencol: " + str(len(columns_to_insert)))
-    print("lenvals: " + str(len(values)))
-
-    values = [str(value) for value in values]  # Convert values to strings
-    #cut down the values in our dataset
-    while (len(columns_to_insert) < len(values)):
-        values.pop()
-
-    print("post pop:")
-    print("lencol: " + str(len(columns_to_insert)))
-    print("lenvals: " + str(len(values)))
-
-    #hardcode date into here
-    '''
-    parsed_date = datetime.strptime(file_name, "%Y-%m-%d")
-    formatted_date = parsed_date.strftime("%m/%d/%Y")
-    columns_to_insert.append("date")
-    values.append(str(formatted_date))
-    '''
-    #print(len(columns_to_insert))
-    #print(len(values))
-    #print(columns_to_insert)
-    #print(values)
-    #exit()
-
-    insert_query = f"INSERT INTO appl1 ({', '.join(columns_to_insert)}) VALUES ({', '.join(values)})"
-    #print(insert_query)
-    #exit()
-    cursor.execute(insert_query)
-    conn.commit()
-    conn.close()
 
 
 def new_create_table():
     count = 144
-    #file_path = 'a.txt'
-    #file_path = f"{date_string}.txt"
-    #with open(file_path, 'r') as file:
-        #fc = json.load(file)
-
-
-    #print("COUNT: " + str(count))
-
-    #this line should remain unchanged, but the 'count' should change conditionally 
+    #should be 13 hours
+    #0900 - 2055
     start_time = datetime.strptime("09:00", "%H:%M")
     iterator_values = range(count)
     time_values = [(start_time + timedelta(minutes=i * 5)).strftime("%H%M") for i in iterator_values]
