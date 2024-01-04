@@ -579,9 +579,11 @@ def temp_fixer_of_bad():
 
     total_db_query = ("SELECT * FROM manzana1")
     df = pd.read_sql_query(total_db_query, conn)
+    #print(df.iloc[0])
+    #exit()
     #TODO TODO TODO THIS IS FOR A SINGLE DAY!!!!!!
+
         
-    print("ASDF")
     #repeated_cols_list = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_']
     holder_col = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_', 'unix_time_']
     values = ['1', '2', '3', '4', '5', '6', '7']
@@ -591,107 +593,168 @@ def temp_fixer_of_bad():
     #this for testing
     end_time = datetime.strptime("20:55", "%H:%M")
 
+    #TODO
+    #this will be in a larger loop in the future, but we're just gonna hardcode it for now
+    this_date = "01/03/2023"
+    this_date = 0
+
     current_time = start_time
     interval = timedelta(minutes=5)
     while current_time <= end_time:
-        #first step is to figure out if the current time exists or is BAD
 
+        #just some setup
         useable_current_time = current_time.strftime("%H%M")
         time_w_colon = current_time.strftime("%H:%M")
-
-        #find the nearest valid previous entry
-        #or let it be known that there is none
-        closest_prev = "notyet"
-        keep_going_back = True
-        past_time = current_time
-        i = 0
-        while(keep_going_back):
-                past_time = past_time - interval
-                formatted_past_time = past_time.strftime("%H%M")
-                #check to see if val for prev time exists
-                try:
-                    holder_name = "open_"+formatted_past_time
-                    maybe = df[holder_name]
-                    #if we here, then ladies n gents, we got em
-                    closest_prev = formatted_past_time
-                    keep_going_back = False
-                    #get outta the shwhile loop
-                    #this is weird, but I basically want to keep iterating
-                    #and there will be an exception if there is no data there
-                except:
-                    dontuse = 420
-
-                if (i >= 30):
-                    keep_going_back = False
-                    closest_prev = "impossible"
-                i = i + 1
-        #END SHWILE HERE
+        holder_col = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_', 'unix_time_']
+        values = ['1', '2', '3', '4', '5', '6', '7']
+        values_dict = {"open": "holder", "close": "holder", "high": "holder", "low": "holder", "volume": "holder", "N": "holder", "unix": "holder"}
         
-        closest_next = "notyet"
-        keep_going_back = True
-        past_time = current_time
-        i = 0
-        while(keep_going_back):
-                past_time = past_time + interval
-                formatted_next_time = past_time.strftime("%H%M")
-                #check to see if val for prev time exists
-                try:
-                    holder_name = "open_"+formatted_next_time
-                    maybe = df[holder_name]
-                    #if we here, then ladies n gents, we got em
-                    closest_next = formatted_next_time
-                    keep_going_back = False
-                    #get outta the shwhile loop
-                except:
-                    #this is weird, but I basically want to keep iterating
-                    #and there will be an exception if there is no data there
-                    dontuse = 420
+        if (df.iloc[this_date]['open_'+useable_current_time] == "BAD"):
+            #we only do this stuffski if there is a missing value
+            #called "BAD"
 
-                if (i >= 30):
-                    keep_going_back = False
-                    closest_next = "impossible"
-                i = i + 1
-        #END SHWILE HERE
-        #print("closest prev: " + closest_prev)
-        #print("closest next: " + closest_next)
-        #now we have the next available vals
-                
-        #name the columns after the curr time
-        for i in range(0,7):
-            holder_col[i] = holder_col[i]+useable_current_time
-        
+
+            #find the nearest valid previous entry
+            #or let it be known that there is none
+            closest_prev = "notyet"
+            keep_going_back = True
+            past_time = current_time
+            i = 0
+            while(keep_going_back):
+                    past_time = past_time - interval
+                    formatted_past_time = past_time.strftime("%H%M")
+                    #check to see if val for prev time exists
+                    try:
+                        holder_name = "open_"+formatted_past_time
+                        maybe = df[holder_name]
+                        #if we here, then ladies n gents, we got em
+                        closest_prev = formatted_past_time
+                        keep_going_back = False
+                        #get outta the shwhile loop
+                        #this is weird, but I basically want to keep iterating
+                        #and there will be an exception if there is no data there
+                    except:
+                        dontuse = 420
+
+                    if (i >= 30):
+                        keep_going_back = False
+                        closest_prev = "impossible"
+                    i = i + 1
+            #END SHWILE HERE
+            
+            closest_next = "notyet"
+            keep_going_back = True
+            past_time = current_time
+            i = 0
+            while(keep_going_back):
+                    past_time = past_time + interval
+                    formatted_next_time = past_time.strftime("%H%M")
+                    #check to see if val for prev time exists
+                    try:
+                        holder_name = "open_"+formatted_next_time
+                        maybe = df[holder_name]
+                        #if we here, then ladies n gents, we got em
+                        closest_next = formatted_next_time
+                        keep_going_back = False
+                        #get outta the shwhile loop
+                    except:
+                        #this is weird, but I basically want to keep iterating
+                        #and there will be an exception if there is no data there
+                        dontuse = 420
+
+                    if (i >= 30):
+                        keep_going_back = False
+                        closest_next = "impossible"
+                    i = i + 1
+            #END SHWILE HERE
+            #print("closest prev: " + closest_prev)
+            #print("closest next: " + closest_next)
+            #now we have the next available vals
+                    
+            #name the columns after the curr time
+            #for i in range(0,7):
+                #holder_col[i] = holder_col[i]+useable_current_time
+            
+
+            #get the r
+            id_closest_prev = "todo"
+            id_closest_next = "todo"
+            
+
+            if (closest_next == "impossible" and closest_prev == "impossible"):
+                print("NO FREAKING WAY THERE IS NO GOSH DARN DATA!!!!!!!!!!!!!!!!!!")
+                print(str(useable_current_time))
+                return useable_current_time
+            
+            #case of prev exists but not the next
+            if (closest_prev != "impossible" and closest_next == "impossible"):
+                #TODO get id/row num from closest_prev
+                #get vals from closest_prev
+                print("USING PREV")
+                #NOTE
+                #it's just easier to overwrite the whole dict and then fix the unix val later
+                col_iterator = 0
+                for key in values_dict:
+                    values_dict[key] = df.iloc[this_date][holder_col[col_iterator]+closest_prev]
+                    col_iterator = col_iterator + 1
+                #print(closest_prev)
+                #print(current_time)
+                #holder_col = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_', 'unix_time_']
+    #values = ['1', '2', '3', '4', '5', '6', '7']
+    #values_dict = {"open": "holder", "close": "holder", "high": "holder", "low": "holder", "volume": "holder", "N": "holder", "unix": "holder"}
+            
+            #case of next exists but nor prev
+            if (closest_prev == "impossible" and closest_next != "impossible"):
+                #TODO get id/row num from closest_next
+                print("using next alone")
+                col_iterator = 0
+                for key in values_dict:
+                    values_dict[key] = df.iloc[this_date][holder_col[col_iterator]+closest_next]
+                    col_iterator = col_iterator + 1
+            
+            #this will be the most likely case
+            if (closest_prev != "impossible" and closest_next != "impossible"):
+                #average the two values
+                col_iterator = 0
+                for key in values_dict:
+                    #print(holder_col[col_iterator])
+                    #print("BRUH1")
+                    #print(closest_prev)
+                    #print("next")
+                    #print(closest_next)
+                    #print("FINAL:")
+                    #print(holder_col[col_iterator]+closest_prev)
+                    #print(df.iloc[this_date][holder_col[col_iterator]+closest_prev])
+
+                    averaged_holder = float(df.iloc[this_date][holder_col[col_iterator]+closest_next]) + float(df.iloc[this_date][holder_col[col_iterator]+closest_prev])
+                    averaged_holder = averaged_holder / 2
+                    averaged_holder = round(averaged_holder, 2)
+                    values_dict[key] = averaged_holder
+                    col_iterator = col_iterator + 1
+                #print("prev")
+                #print(closest_prev)
+                #print("next")
+                #print(closest_next)
+
         #hardcode unix time as the right unix time bc that is always gonna be known
-        temp_unix = "todo this, u need to use a sample unix time from"
+        #temp_unix = "todo this, u need to use a sample unix time from"
         #prev or next
         #and there's prob a function to unixify it
         #or just hardcode the difference
-
-        if (closest_next == "impossible" and closest_prev == "impossible"):
-            print("NO FREAKING WAY THERE IS NO GOSH DARN DATA!!!!!!!!!!!!!!!!!!")
-            print(str(useable_current_time))
-            return useable_current_time
-        
-        #case of prev exists but not the next
-        if (closest_prev != "impossible" and closest_next == "impossible"):
-            #get vals from closest_prev
-            print("USING PREV")
-            #print(closest_prev)
-            #print(current_time)
-        
-        #case of next exists but nor prev
-        if (closest_prev == "impossible" and closest_next != "impossible"):
-            print("using next alone")
-        
-        #this will be the most likely case
-        if (closest_prev != "impossible" and closest_next != "impossible"):
-            #average the two values
-            print("ayyo")
-            print("curr")
-            print(useable_current_time)
+            #print("logic placeholder this level is within stuff we do big while loop")
+            print("VALS DICT")
+            print(values_dict)
             print("prev")
             print(closest_prev)
             print("next")
             print(closest_next)
+
+
+            #TODO ADD TO BIG DF BUT DONT FORGET TO STRINGIFY
+        
+        
+        #this is the end, lowkey only do the whole loop conditionally
+        #this is the end of stuff we do iff BAD
 
         
 
