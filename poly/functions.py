@@ -594,6 +594,8 @@ def temp_fixer_of_bad():
     current_time = start_time
     interval = timedelta(minutes=5)
     while current_time <= end_time:
+        #first step is to figure out if the current time exists or is BAD
+
         useable_current_time = current_time.strftime("%H%M")
         time_w_colon = current_time.strftime("%H:%M")
 
@@ -683,7 +685,13 @@ def temp_fixer_of_bad():
         #this will be the most likely case
         if (closest_prev != "impossible" and closest_next != "impossible"):
             #average the two values
-            print("")
+            print("ayyo")
+            print("curr")
+            print(useable_current_time)
+            print("prev")
+            print(closest_prev)
+            print("next")
+            print(closest_next)
 
         
 
