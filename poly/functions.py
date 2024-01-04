@@ -579,13 +579,7 @@ def temp_fixer_of_bad():
 
     total_db_query = ("SELECT * FROM manzana1")
     df = pd.read_sql_query(total_db_query, conn)
-    #print(df)
-    #all vals are strings from the db
-
-    #next is the tricky part
-    #now I need to get each column into a dataframe
-    #and use some pandas or numpy function to average out the values that are "BAD"
-    #the tricky part is how do I find what I want to put there
+    #TODO TODO TODO THIS IS FOR A SINGLE DAY!!!!!!
         
     print("ASDF")
     #repeated_cols_list = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_']
@@ -620,6 +614,8 @@ def temp_fixer_of_bad():
                     closest_prev = formatted_past_time
                     keep_going_back = False
                     #get outta the shwhile loop
+                    #this is weird, but I basically want to keep iterating
+                    #and there will be an exception if there is no data there
                 except:
                     dontuse = 420
 
@@ -645,6 +641,8 @@ def temp_fixer_of_bad():
                     keep_going_back = False
                     #get outta the shwhile loop
                 except:
+                    #this is weird, but I basically want to keep iterating
+                    #and there will be an exception if there is no data there
                     dontuse = 420
 
                 if (i >= 30):
@@ -672,8 +670,20 @@ def temp_fixer_of_bad():
             return useable_current_time
         
         #case of prev exists but not the next
-        #if (closest_prev != "impossible" and closest_next == "impossible"):
-            #fill out vals with vals of closest_prev
+        if (closest_prev != "impossible" and closest_next == "impossible"):
+            #get vals from closest_prev
+            print("USING PREV")
+            #print(closest_prev)
+            #print(current_time)
+        
+        #case of next exists but nor prev
+        if (closest_prev == "impossible" and closest_next != "impossible"):
+            print("using next alone")
+        
+        #this will be the most likely case
+        if (closest_prev != "impossible" and closest_next != "impossible"):
+            #average the two values
+            print("")
 
         
 
@@ -684,10 +694,21 @@ def temp_fixer_of_bad():
         current_time += interval
        
 
-
-
+    #TODO
+    #only do this stuff if there is NO, or BAD data here
+    #TODO
+    #write changes back to the dataframe
+    #eventually, loop over the dataframe again with added values
+    #until the df is complete and whole
+    #then write to the db from the df
+    #TODO
+    #then loop it for different dates; this is for single day atm
     conn.commit()
     conn.close()
+
+
+
+
 
 def new_create_table():
     count = 144
