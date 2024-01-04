@@ -666,30 +666,16 @@ def temp_fixer_of_bad():
                         keep_going_back = False
                         closest_next = "impossible"
                     i = i + 1
-            #END SHWILE HERE
-            #print("closest prev: " + closest_prev)
-            #print("closest next: " + closest_next)
-            #now we have the next available vals
-                    
-            #name the columns after the curr time
-            #for i in range(0,7):
-                #holder_col[i] = holder_col[i]+useable_current_time
             
-
-            #get the r
-            id_closest_prev = "todo"
-            id_closest_next = "todo"
-            
-
+            #case of somehow there are no possible replacement vals THIS SHOULD NEVER HAPPEN LMFAOO
             if (closest_next == "impossible" and closest_prev == "impossible"):
                 print("NO FREAKING WAY THERE IS NO GOSH DARN DATA!!!!!!!!!!!!!!!!!!")
                 print(str(useable_current_time))
                 return useable_current_time
             
+            
             #case of prev exists but not the next
             if (closest_prev != "impossible" and closest_next == "impossible"):
-                #TODO get id/row num from closest_prev
-                #get vals from closest_prev
                 print("USING PREV")
                 #NOTE
                 #it's just easier to overwrite the whole dict and then fix the unix val later
@@ -697,15 +683,11 @@ def temp_fixer_of_bad():
                 for key in values_dict:
                     values_dict[key] = df.iloc[this_date][holder_col[col_iterator]+closest_prev]
                     col_iterator = col_iterator + 1
-                #print(closest_prev)
-                #print(current_time)
-                #holder_col = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_', 'unix_time_']
-    #values = ['1', '2', '3', '4', '5', '6', '7']
-    #values_dict = {"open": "holder", "close": "holder", "high": "holder", "low": "holder", "volume": "holder", "N": "holder", "unix": "holder"}
+                #fix unix time
+
             
             #case of next exists but nor prev
             if (closest_prev == "impossible" and closest_next != "impossible"):
-                #TODO get id/row num from closest_next
                 print("using next alone")
                 col_iterator = 0
                 for key in values_dict:
@@ -717,37 +699,48 @@ def temp_fixer_of_bad():
                 #average the two values
                 col_iterator = 0
                 for key in values_dict:
-                    #print(holder_col[col_iterator])
-                    #print("BRUH1")
-                    #print(closest_prev)
-                    #print("next")
-                    #print(closest_next)
-                    #print("FINAL:")
-                    #print(holder_col[col_iterator]+closest_prev)
-                    #print(df.iloc[this_date][holder_col[col_iterator]+closest_prev])
-
                     averaged_holder = float(df.iloc[this_date][holder_col[col_iterator]+closest_next]) + float(df.iloc[this_date][holder_col[col_iterator]+closest_prev])
                     averaged_holder = averaged_holder / 2
                     averaged_holder = round(averaged_holder, 2)
                     values_dict[key] = averaged_holder
                     col_iterator = col_iterator + 1
-                #print("prev")
-                #print(closest_prev)
-                #print("next")
-                #print(closest_next)
+                #replace unix val
+                #no change here, bc its the average, just make sure to format later
 
-        #hardcode unix time as the right unix time bc that is always gonna be known
-        #temp_unix = "todo this, u need to use a sample unix time from"
-        #prev or next
-        #and there's prob a function to unixify it
-        #or just hardcode the difference
-            #print("logic placeholder this level is within stuff we do big while loop")
-            print("VALS DICT")
+            #fix unix time
+            hours = int(useable_current_time[:2])
+            mins = int(useable_current_time[2:])
+            hours = useable_current_time[:2]
+            mins = useable_current_time[2:]
+            print("hrs: " + str(hours))
+            print("mins: " + str(mins))
+            print("useable curr time: " + useable_current_time)
+            ref_timestamp = int(values_dict['unix']) / 1000
+            #this should be from the same day
+            ref_dt = datetime.utcfromtimestamp(ref_timestamp)
+            new_datetime = ref_dt.replace(hour=hours, minute=mins, second=0, microsecond=0)
+            new_timestamp = int(new_datetime.timestamp())
+            print("START UNIX")
+            print(new_timestamp)
             print(values_dict)
-            print("prev")
-            print(closest_prev)
-            print("next")
-            print(closest_next)
+            print(useable_current_time)
+            #1672738500000
+                    
+            #TODO FORMAT THE FLOATS AND THEN CONVERT ALL TO STRINGS
+            temp_unix = int(values_dict['unix'])
+            #get the date
+            #hardcode unix time as the right unix time bc that is always gonna be known
+            #temp_unix = "todo this, u need to use a sample unix time from"
+            #prev or next
+            #and there's prob a function to unixify it
+            #or just hardcode the difference
+            #print("logic placeholder this level is within stuff we do big while loop")
+            #print("VALS DICT")
+            #print(values_dict)
+            #print("prev")
+            #print(closest_prev)
+            #print("next")
+            #print(closest_next)
 
 
             #TODO ADD TO BIG DF BUT DONT FORGET TO STRINGIFY
