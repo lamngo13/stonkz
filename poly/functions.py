@@ -735,7 +735,8 @@ def temp_fixer_of_bad():
             for i in range(0,len(holder_col)):
                 #print("iterator: " + str(i))
                 temp_col_name = holder_col[i]+useable_current_time
-                df.iloc[this_date][temp_col_name] = values_dict[holder_col_nounder[i]]
+                #df.iloc[this_date][temp_col_name] = values_dict[holder_col_nounder[i]]
+                df.at[this_date, temp_col_name] = values_dict[holder_col_nounder[i]]
 
             #print(df.iloc[this_date])
             
@@ -764,7 +765,15 @@ def temp_fixer_of_bad():
     #then write to the db from the df
     #TODO
     #then loop it for different dates; this is for single day atm
-    df.to_sql(table_name, conn, if_exists='replace', index=False)
+    #df.to_sql(table_name, conn, if_exists='replace', index=False)
+    #print("ASDFASDFASDF")
+    #print(df.iloc[0]['open_0935'])
+    print(str(type(df.iloc[0])))
+    with open("out.txt", 'w') as file:
+        string = df.iloc[0].to_string(index=False)
+        file.write(string)
+
+        
     conn.commit()
     conn.close()
 
