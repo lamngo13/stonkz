@@ -586,6 +586,7 @@ def temp_fixer_of_bad():
         
     #repeated_cols_list = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_']
     holder_col = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_', 'unix_time_']
+    holder_col_nounder = ['open', 'close', 'high', 'low', 'volume', 'N', 'unix']
     values = ['1', '2', '3', '4', '5', '6', '7']
     values_dict = {"open": "holder", "close": "holder", "high": "holder", "low": "holder", "volume": "holder", "N": "holder", "unix": "holder"}
     start_time = datetime.strptime("09:00", "%H:%M")
@@ -610,6 +611,7 @@ def temp_fixer_of_bad():
         values_dict = {"open": "holder", "close": "holder", "high": "holder", "low": "holder", "volume": "holder", "N": "holder", "unix": "holder"}
         
         if (df.iloc[this_date]['open_'+useable_current_time] == "BAD"):
+            print(useable_current_time)
             #we only do this stuffski if there is a missing value
             #called "BAD"
 
@@ -716,7 +718,6 @@ def temp_fixer_of_bad():
             ref_timestamp = int(values_dict['unix']) / 1000
             #this should be from the same day
             ref_dt = datetime.utcfromtimestamp(ref_timestamp)
-            print(ref_dt)
             new_datetime = ref_dt.replace(hour=hours, minute=mins, second=0, microsecond=0)
             new_timestamp = int(new_datetime.timestamp())
             new_timestamp = new_timestamp * 1000
@@ -728,6 +729,15 @@ def temp_fixer_of_bad():
             #convert all of values_dict to strings
             for z in values_dict:
                 values_dict[z] = str(values_dict[z])
+
+            #add this dict back into dataframe
+            for i in range(0,len(holder_col)):
+                #print("iterator: " + str(i))
+                temp_col_name = holder_col[i]+useable_current_time
+                df.iloc[this_date][temp_col_name] = values_dict[holder_col_nounder[i]]
+
+            #print(df.iloc[this_date])
+            
 
         
         
@@ -753,6 +763,7 @@ def temp_fixer_of_bad():
     #then write to the db from the df
     #TODO
     #then loop it for different dates; this is for single day atm
+    df.to_csv("temp.txt", index=False)
     conn.commit()
     conn.close()
 
