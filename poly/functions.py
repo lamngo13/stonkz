@@ -575,6 +575,7 @@ def fixer_of_bad():
 def temp_fixer_of_bad():
     
     conn = sqlite3.connect("manzana1.db")
+    table_name = "manzana1"
     cursor = conn.cursor()
 
     total_db_query = ("SELECT * FROM manzana1")
@@ -763,7 +764,7 @@ def temp_fixer_of_bad():
     #then write to the db from the df
     #TODO
     #then loop it for different dates; this is for single day atm
-    df.to_csv("temp.txt", index=False)
+    df.to_sql(table_name, conn, if_exists='replace', index=False)
     conn.commit()
     conn.close()
 
