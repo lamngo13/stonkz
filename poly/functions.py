@@ -710,40 +710,26 @@ def temp_fixer_of_bad():
             #fix unix time
             hours = int(useable_current_time[:2])
             mins = int(useable_current_time[2:])
-            hours = useable_current_time[:2]
-            mins = useable_current_time[2:]
-            print("hrs: " + str(hours))
-            print("mins: " + str(mins))
-            print("useable curr time: " + useable_current_time)
+
+            #this unix time here is a reference, it is not exact
+            #but it should be on the same day and that's all we need!
             ref_timestamp = int(values_dict['unix']) / 1000
             #this should be from the same day
             ref_dt = datetime.utcfromtimestamp(ref_timestamp)
+            print(ref_dt)
             new_datetime = ref_dt.replace(hour=hours, minute=mins, second=0, microsecond=0)
             new_timestamp = int(new_datetime.timestamp())
-            print("START UNIX")
-            print(new_timestamp)
-            print(values_dict)
-            print(useable_current_time)
-            #1672738500000
+            new_timestamp = new_timestamp * 1000
                     
             #TODO FORMAT THE FLOATS AND THEN CONVERT ALL TO STRINGS
-            temp_unix = int(values_dict['unix'])
-            #get the date
-            #hardcode unix time as the right unix time bc that is always gonna be known
-            #temp_unix = "todo this, u need to use a sample unix time from"
-            #prev or next
-            #and there's prob a function to unixify it
-            #or just hardcode the difference
-            #print("logic placeholder this level is within stuff we do big while loop")
-            #print("VALS DICT")
-            #print(values_dict)
-            #print("prev")
-            #print(closest_prev)
-            #print("next")
-            #print(closest_next)
+            values_dict['unix'] = new_timestamp
+            #miliseconds
 
+            #convert all of values_dict to strings
+            for z in values_dict:
+                values_dict[z] = str(values_dict[z])
 
-            #TODO ADD TO BIG DF BUT DONT FORGET TO STRINGIFY
+        
         
         
         #this is the end, lowkey only do the whole loop conditionally
