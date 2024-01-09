@@ -17,6 +17,12 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 import pandas as pd
 import xgboost as xgb
+#from tensorflow.keras.models import Sequential
+#from tensorflow.keras.layers import LSTM, Dense
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
 
 
 def create_sequences(data, sequence_length):
@@ -153,3 +159,16 @@ def getdfs():
     plt.show()
 
 
+def ltsm():
+    print("STONKZ")
+    conn = sqlite3.connect('manzana1.db')
+    query = "SELECT * FROM manzana1"
+    stock_data = pd.read_sql_query(query, conn)
+    
+    print(len(stock_data))
+    #just in case weird formatting
+    zstock_data = stock_data.dropna()
+    if (zstock_data == stock_data):
+        print("same")
+    else:
+        print("diff")

@@ -14,6 +14,8 @@ import json
 #fixer_of_bad()
 #this changes prev close n stuff
 
+#temp_fixer_of_bad()
+#this fills in missing vals from the api
 
 #workspace
-temp_fixer_of_bad()
+ltsm()
