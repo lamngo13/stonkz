@@ -595,17 +595,21 @@ def temp_fixer_of_bad():
     #this for testing
     end_time = datetime.strptime("20:55", "%H:%M")
 
-    #TODO
-    #this will be in a larger loop in the future, but we're just gonna hardcode it for now
-    this_date = "01/03/2023"
-    this_date = -1
-
-
     #start big shwile loop
-    for this_date in range(0, len(df['open_0900'])+1 ):
+    for this_date in range(0, len(df['open_0900']) ):
+        print("DATAFRAME INDEX ASSESSING: " + str(this_date))
+        print("BASE INDEX ASSESSING: " + str(this_date + 1))
 
         current_time = start_time
         interval = timedelta(minutes=5)
+
+        conn = sqlite3.connect("manzana1.db")
+        table_name = "manzana1"
+        cursor = conn.cursor()
+        total_db_query = ("SELECT * FROM manzana1")
+        df = pd.read_sql_query(total_db_query, conn)
+
+
         while current_time <= end_time:
 
             #just some setup
@@ -614,12 +618,19 @@ def temp_fixer_of_bad():
             holder_col = ['open_', 'close_', 'high_', 'low_', 'volume_', 'N_', 'unix_time_']
             values = ['1', '2', '3', '4', '5', '6', '7']
             values_dict = {"open": "holder", "close": "holder", "high": "holder", "low": "holder", "volume": "holder", "N": "holder", "unix": "holder"}
-            this_date = this_date + 1
             
             if (df.iloc[this_date]['open_'+useable_current_time] == "BAD"):
+                print("the following time is BAD for this day")
                 print(useable_current_time)
+                conn = sqlite3.connect("manzana1.db")
+                table_name = "manzana1"
+                cursor = conn.cursor()
+                total_db_query = ("SELECT * FROM manzana1")
+                df = pd.read_sql_query(total_db_query, conn)
                 #we only do this stuffski if there is a missing value
                 #called "BAD"
+                #####print("this_date val" + str(this_date))
+                #####print(df.iloc[this_date])
 
 
                 #find the nearest valid previous entry
@@ -634,7 +645,12 @@ def temp_fixer_of_bad():
                         #check to see if val for prev time exists
                         try:
                             holder_name = "open_"+formatted_past_time
-                            maybe = df[holder_name]
+                            maybe = df.iloc[this_date][holder_name]
+                            #ensure that its a number and not BAD
+                            if (str(maybe) == "BAD"):
+                                #make it fail
+                                failer = 1/0
+
                             #if we here, then ladies n gents, we got em
                             closest_prev = formatted_past_time
                             keep_going_back = False
@@ -643,6 +659,7 @@ def temp_fixer_of_bad():
                             #and there will be an exception if there is no data there
                         except:
                             dontuse = 420
+                            print("no data for " + formatted_past_time)
 
                         if (i >= 30):
                             keep_going_back = False
@@ -651,27 +668,35 @@ def temp_fixer_of_bad():
                 #END SHWILE HERE
                 
                 closest_next = "notyet"
-                keep_going_back = True
+                keep_going_forward = True
                 past_time = current_time
                 i = 0
-                while(keep_going_back):
+                while(keep_going_forward):
                         past_time = past_time + interval
                         formatted_next_time = past_time.strftime("%H%M")
                         #check to see if val for prev time exists
                         try:
                             holder_name = "open_"+formatted_next_time
-                            maybe = df[holder_name]
+                            print(holder_name)
+                            maybe = df.iloc[this_date][holder_name]
+                            print(maybe)
+                            #ensure that its a number and not BAD
+                            if (str(maybe) == "BAD"):
+                                #make it fail
+                                failer = 1/0
+
                             #if we here, then ladies n gents, we got em
                             closest_next = formatted_next_time
-                            keep_going_back = False
+                            keep_going_forward = False
                             #get outta the shwhile loop
                         except:
                             #this is weird, but I basically want to keep iterating
                             #and there will be an exception if there is no data there
+                            print("no data for " + formatted_next_time)
                             dontuse = 420
 
                         if (i >= 30):
-                            keep_going_back = False
+                            keep_going_forward = False
                             closest_next = "impossible"
                         i = i + 1
                 
@@ -704,6 +729,9 @@ def temp_fixer_of_bad():
                 
                 #this will be the most likely case
                 if (closest_prev != "impossible" and closest_next != "impossible"):
+                    print("CASE: BOTH SIDES")
+                    print("closest prev: " + closest_prev)
+                    print("closest next: " + closest_next)
                     #average the two values
                     col_iterator = 0
                     for key in values_dict:
@@ -742,45 +770,30 @@ def temp_fixer_of_bad():
                     temp_col_name = holder_col[i]+useable_current_time
                     #df.iloc[this_date][temp_col_name] = values_dict[holder_col_nounder[i]]
                     df.at[this_date, temp_col_name] = values_dict[holder_col_nounder[i]]
-
-                #print(df.iloc[this_date])
                 
 
             
+                #this is the end, lowkey only do the whole loop conditionally
+                #this is the end of stuff we do iff BAD
+                print("writing to db for db id of " +str(this_date+1))
+                df.to_sql(table_name, conn, if_exists='replace', index=False)
+                conn.commit()
+                conn.close()
+
+                conn = sqlite3.connect("manzana1.db")
+                table_name = "manzana1"
+                cursor = conn.cursor()
             
-            
-            #this is the end, lowkey only do the whole loop conditionally
-            #this is the end of stuff we do iff BAD
-
-            
-
-
-
+            #this line is outside the if bad
 
             #iteration step
             current_time += interval
+
+
+    #ultimately close
+    conn.commit()
+    conn.close()
         
-
-        #TODO
-        #only do this stuff if there is NO, or BAD data here
-        #TODO
-        #write changes back to the dataframe
-        #eventually, loop over the dataframe again with added values
-        #until the df is complete and whole
-        #then write to the db from the df
-
-        #then loop it for different dates; this is for single day atm
-        df.to_sql(table_name, conn, if_exists='replace', index=False)
-        #print("ASDFASDFASDF")
-        #print(df.iloc[0]['open_0935'])
-        #print(str(type(df.iloc[0])))
-        #with open("out.txt", 'w') as file:
-            #string = df.iloc[0].to_string(index=False)
-            #file.write(string)
-
-
-        conn.commit()
-        conn.close()
 
 
 
