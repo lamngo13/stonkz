@@ -1,8 +1,0 @@
-{
-    "ticker": "AAPL",
-    "queryCount": 0,
-    "resultsCount": 0,
-    "adjusted": true,
-    "status": "OK",
-    "request_id": "b98fdb896cf92a0701dd48dcbdce69d7"
-}

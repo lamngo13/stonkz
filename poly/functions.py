@@ -280,18 +280,18 @@ def prev(id: int, year: int, month: int, day: int):
 
 def orderer():
     print("sorting by unix_time_0905")
-    conn = sqlite3.connect('appl1.db')
+    conn = sqlite3.connect('manzana1.db')
     cursor = conn.cursor()
 
     # Query to reorder the table by date in ascending order and update the original table
     query = '''
         CREATE TABLE temp_table AS
-        SELECT * FROM appl1
+        SELECT * FROM manzana1
         ORDER BY unix_time_0905 ASC;
         
         DROP TABLE appl1;
         
-        ALTER TABLE temp_table RENAME TO appl1;
+        ALTER TABLE temp_table RENAME TO manzana1;
     '''
 
     # Execute the query
@@ -348,8 +348,8 @@ def autofiller():
     api_key = "TRxer9Mhmo64ERvyE5mRbrQI69Atdo7v"
     symbol = 'AAPL'
 
-    start_date = datetime(2023, 12, 1)
-    end_date = datetime(2023, 12, 28)
+    start_date = datetime(2022, 1, 10)
+    end_date = datetime(2022, 12, 31)
     #I think this is inclusive
 
     current_date = start_date
@@ -424,8 +424,8 @@ def investigation():
     #this loops through your text files that do exist, and passes them into 
     #another function, tru_new_db()
     #start at jan 3rd!!!!
-    start_date = datetime(2023, 12, 1)
-    end_date = datetime(2023, 12, 28) #inclusive i think 
+    start_date = datetime(2022, 1, 10)
+    end_date = datetime(2022, 12, 31)
     #THESE ARE INCLUSIVE OF BOTH
     
 
@@ -542,6 +542,32 @@ def tru_new_db(date_string_in):
     conn.commit()
     conn.close()
 
+def id_adder():
+    
+    conn = sqlite3.connect("manzana1.db")
+    cursor = conn.cursor()
+    number_query = "SELECT COUNT(*) FROM manzana1"
+    cursor.execute(number_query)
+    num_rows = int(cursor.fetchone()[0])
+
+    #fix prev close placeholder of BAD
+    for i in range(2,num_rows+1):
+        print(str(i))
+        prev_close_query = f"SELECT close_2055 FROM manzana1 WHERE id = {i-1}"
+        cursor.execute(prev_close_query)
+        prev = str(cursor.fetchone()[0])
+
+        prev_close_updater_query = f'''
+        UPDATE manzana1 SET prev_close = {prev} WHERE id = {i}
+        '''
+        cursor.execute(prev_close_updater_query)
+       
+
+
+
+    conn.commit()
+    conn.close()
+
 def fixer_of_bad():
     
     conn = sqlite3.connect("manzana1.db")
@@ -552,6 +578,7 @@ def fixer_of_bad():
 
     #fix prev close placeholder of BAD
     for i in range(2,num_rows+1):
+        print(str(i))
         prev_close_query = f"SELECT close_2055 FROM manzana1 WHERE id = {i-1}"
         cursor.execute(prev_close_query)
         prev = str(cursor.fetchone()[0])
@@ -560,11 +587,6 @@ def fixer_of_bad():
         UPDATE manzana1 SET prev_close = {prev} WHERE id = {i}
         '''
         cursor.execute(prev_close_updater_query)
-
-    #next is the tricky part
-    #now I need to get each column into a dataframe
-    #and use some pandas or numpy function to average out the values that are "BAD"
-    #the tricky part is how do I find what I want to put there
        
 
 
