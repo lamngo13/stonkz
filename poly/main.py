@@ -26,4 +26,4 @@ import json
 
 #rn im fetching old data
 #id_adder()
-orderer()
+temp_fixer_of_bad()

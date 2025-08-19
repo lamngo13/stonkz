@@ -301,13 +301,13 @@ def orderer():
 
 def better_orderer():
     # Connect to the database
-    conn = sqlite3.connect("appl1.db")  # Replace with your actual database file name
+    conn = sqlite3.connect("manzana1.db")  # Replace with your actual database file name
     cursor = conn.cursor()
 
     # Execute the query to select all columns from your_table and order by date
     query = """
     SELECT *
-    FROM appl1
+    FROM manzana1
     ORDER BY
       SUBSTR(date, 7, 4) || SUBSTR(date, 1, 2) || SUBSTR(date, 4, 2);
     """
@@ -596,7 +596,7 @@ def fixer_of_bad():
  
 def temp_fixer_of_bad():
     
-    conn = sqlite3.connect("manzana1.db")
+    conn = sqlite3.connect("manzana2.db")
     table_name = "manzana1"
     cursor = conn.cursor()
 
@@ -625,7 +625,7 @@ def temp_fixer_of_bad():
         current_time = start_time
         interval = timedelta(minutes=5)
 
-        conn = sqlite3.connect("manzana1.db")
+        conn = sqlite3.connect("manzana2.db")
         table_name = "manzana1"
         cursor = conn.cursor()
         total_db_query = ("SELECT * FROM manzana1")
@@ -644,7 +644,7 @@ def temp_fixer_of_bad():
             if (df.iloc[this_date]['open_'+useable_current_time] == "BAD"):
                 print("the following time is BAD for this day")
                 print(useable_current_time)
-                conn = sqlite3.connect("manzana1.db")
+                conn = sqlite3.connect("manzana2.db")
                 table_name = "manzana1"
                 cursor = conn.cursor()
                 total_db_query = ("SELECT * FROM manzana1")
@@ -802,7 +802,7 @@ def temp_fixer_of_bad():
                 conn.commit()
                 conn.close()
 
-                conn = sqlite3.connect("manzana1.db")
+                conn = sqlite3.connect("manzana2.db")
                 table_name = "manzana1"
                 cursor = conn.cursor()
             
